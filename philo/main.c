@@ -6,18 +6,23 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <string.h>
+#include <limits.h>
 
 #define SUCCESS	0
 #define ERROR	1
+#define ERR_WRONG_NUMBER_OF_ARGUMENTS	2
+#define ERR_ARGUMENT_OUT_OF_BOUNDS	3
+#define ERR_MALLOC_FAILED	4
 
 typedef enum	e_state { THINKING, HUNGRY, EATING, SLEEPING, DEAD } t_state;
+// typedef enum	e_error { SUCCESS, ERR_WRONG_NUMBER_OF_ARGUMENTS, ERR_ARGUMENT_OUT_OF_BOUNDS } t_error;
 
-typedef struct	s_timers
+typedef struct	s_constants
 {
 	unsigned int	time_to_eat;
 	unsigned int	time_to_sleep;
 	unsigned int	time_to_die;
-}				t_timers;
+}				t_constants;
 
 typedef struct	s_philosopher
 {
@@ -26,11 +31,12 @@ typedef struct	s_philosopher
 	pthread_t		thread;
 	unsigned int	last_meal;
 	unsigned int	meal_count;
-	t_timers		*timers;
+	t_constants		*constants;
 }				t_philosopher;
 
 typedef struct	s_simulation
 {
+	t_constants		*constants;
 	size_t			number_of_philosophers;
 	t_philosopher	*philosophers;
 	pthread_mutex_t	*forks;
@@ -46,11 +52,11 @@ void *destroy_philosophers(t_philosopher *philosophers, size_t number_of_philoso
 t_philosopher *init_philosophers(size_t number_of_philosophers);
 int	ft_atoi(const char *str);
 
-int	ft_atoi(const char *str)
+long	ft_atol(const char *str)
 {
-	long	total;
-	int		sign;
-	size_t	index;
+	long long	total;
+	int			sign;
+	size_t		index;
 
 	total = 0;
 	sign = 1;
@@ -211,9 +217,55 @@ int watcher(t_simulation *simulation)
 	return (SUCCESS);
 }
 
-bool parse_arguments(char *argv[])
+bool is_in_bounds(long value, long lower, long upper)
 {
+	if (value < lower || value > upper)
+		return (false);
 	return (true);
+}
+
+#define NUMBER_OF_PHILOSOPHERS 1
+#define TIME_TO_DIE 2
+#define TIME_TO_EAT 3
+#define TIME_TO_SLEEP 4
+#define NUMBER_OF_MEALS 5
+
+int parse_arguments(t_constants *constants, int *nop, char *argv[], int argc)
+{
+	long			number_of_philosophers;
+	long			time_to_eat;
+	long			time_to_sleep;
+	long			time_to_die;
+
+	if (!constants)
+		return (ERROR);
+	if (argc != 5 && argc != 6)
+		return (ERR_WRONG_NUMBER_OF_ARGUMENTS);
+	number_of_philosophers = ft_atol(argv[NUMBER_OF_PHILOSOPHERS]);
+	if (!is_in_bounds(number_of_philosophers, 0, INT_MAX))
+		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
+	time_to_die = ft_atol(argv[TIME_TO_DIE]);
+	if (!is_in_bounds(time_to_die, 0, INT_MAX))
+		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
+	time_to_eat = ft_atol(argv[TIME_TO_EAT]);
+	if (!is_in_bounds(time_to_eat, 0, INT_MAX))
+		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
+	time_to_sleep = ft_atol(argv[TIME_TO_SLEEP]);
+	if (!is_in_bounds(time_to_sleep, 0, INT_MAX))
+		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
+	if (argc == 6)
+	{
+		printf("Number of meals not implemented yet !\n");
+		// time_to_sleep = ft_atol(argv[TIME_TO_SLEEP]);
+		// if (!is_in_bounds(time_to_sleep, 0, INT_MAX))
+		// 	return (ERR_ARGUMENT_OUT_OF_BOUNDS);
+	}
+	constants->time_to_die = time_to_die;
+	constants->time_to_eat = time_to_eat;
+	constants->time_to_sleep = time_to_sleep;
+	*nop = number_of_philosophers;
+
+	return (SUCCESS);
 }
 
 // To really destroy threads we should unlock all forks then check if the philo is dead, then return from routine and the thread will detach itself
@@ -222,16 +274,21 @@ int main(int argc, char *argv[])
 {
 	t_simulation *simulation;
 	t_philosopher *philosophers;
-
+	t_constants *constants;
 	size_t index = 0;
 	int number_of_philosophers;
 
 	if (argc < 2)
 		return (1);
-	number_of_philosophers = ft_atoi(argv[1]);
-	if (number_of_philosophers <= 0)
+	constants = malloc(sizeof(t_constants));
+	if (!constants)
 		return (2);
-	simulation = init_simulation((size_t)number_of_philosophers);
+	if (parse_arguments(constants, &number_of_philosophers, argv, argc) != SUCCESS)
+	{
+		printf("Error while parsing arguments\n");
+		return (3);
+	}
+	simulation = init_simulation(number_of_philosophers);
 	if (!simulation)
 		printf("ERROR: couldn't initialize simulation\n");
 	watcher(simulation);
