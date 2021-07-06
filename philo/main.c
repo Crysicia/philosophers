@@ -14,6 +14,12 @@
 #define ERR_ARGUMENT_OUT_OF_BOUNDS	3
 #define ERR_MALLOC_FAILED	4
 
+#define NUMBER_OF_PHILOSOPHERS 1
+#define TIME_TO_DIE 2
+#define TIME_TO_EAT 3
+#define TIME_TO_SLEEP 4
+#define NUMBER_OF_MEALS 5
+
 typedef enum	e_state { THINKING, HUNGRY, EATING, SLEEPING, DEAD } t_state;
 // typedef enum	e_error { SUCCESS, ERR_WRONG_NUMBER_OF_ARGUMENTS, ERR_ARGUMENT_OUT_OF_BOUNDS } t_error;
 
@@ -37,20 +43,33 @@ typedef struct	s_philosopher
 typedef struct	s_simulation
 {
 	t_constants		*constants;
-	size_t			number_of_philosophers;
+	unsigned int	number_of_philosophers;
 	t_philosopher	*philosophers;
 	pthread_mutex_t	*forks;
 }				t_simulation;
+
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t index;
+
+	index = 0;
+	while (index < n)
+	{
+		*(char *)(s + index) = 0;
+		index++;
+	}
+}
 
 pthread_mutex_t *init_forks(size_t number_of_philosophers);
 bool init_philosopher(t_philosopher *philosopher, size_t index);
 void display_message(size_t id, t_state state);
 void *routine(void *arg);
 void *destroy_simulation(t_simulation *simulation);
-void *destroy_forks(pthread_mutex_t *forks, size_t number_of_forks);
-void *destroy_philosophers(t_philosopher *philosophers, size_t number_of_philosophers);
+void *destroy_forks(pthread_mutex_t *forks);
+void *destroy_philosophers(t_philosopher *philosophers);
 t_philosopher *init_philosophers(size_t number_of_philosophers);
-int	ft_atoi(const char *str);
+long	ft_atol(const char *str);
 
 long	ft_atol(const char *str)
 {
@@ -78,57 +97,114 @@ long	ft_atol(const char *str)
 	return (total * sign);
 }
 
-t_simulation *init_simulation(size_t number_of_philosophers)
+// t_simulation *init_simulation(size_t number_of_philosophers)
+// {
+// 	t_simulation *simulation;
+
+// 	simulation = malloc(sizeof(t_simulation));
+// 	if (!simulation)
+// 		return (NULL);
+// 	simulation->number_of_philosophers = 0; // BEWARE, if philosophers are initialized but not forks, philos WILL NOT BE freed
+// 	simulation->philosophers = init_philosophers(number_of_philosophers);
+// 	simulation->forks = init_forks(number_of_philosophers);
+// 	if (!simulation->philosophers || !simulation->forks)
+// 		return (destroy_simulation(simulation));
+// 	simulation->number_of_philosophers = number_of_philosophers;
+// 	return (simulation);
+// }
+
+bool contain_only_numbers(char *str)
+{
+	while (*str >= '0' && *str <= '9')
+		str++;
+	return (*str == '\0');
+}
+
+bool parse_number(char *arg, unsigned int *target)
+{
+	long parsed_number;
+
+	if (!contain_only_numbers(arg))
+		return (false);
+	parsed_number = ft_atol(arg);
+	if (parsed_number < 0|| parsed_number > INT_MAX)
+		return (false);
+	*target = (unsigned int)parsed_number;
+	return (true);
+}
+
+t_constants *init_constants(int argc, char *argv[])
+{
+	t_constants *constants;
+
+	constants = malloc(sizeof(t_constants));
+	ft_bzero(constants, sizeof(t_constants));
+	if (!constants)
+		return (NULL);
+	if (!parse_number(argv[2], &constants->time_to_die)
+		|| !parse_number(argv[3], &constants->time_to_eat)
+		|| !parse_number(argv[4], &constants->time_to_sleep))
+	{
+		free(constants);
+		return (NULL);
+	}
+	return (constants);
+}
+
+t_simulation *init_simulation(int argc, char *argv[])
 {
 	t_simulation *simulation;
 
 	simulation = malloc(sizeof(t_simulation));
 	if (!simulation)
 		return (NULL);
-	simulation->number_of_philosophers = 0; // BEWARE, if philosophers are initialized but not forks, philos WILL NOT BE freed
-	simulation->philosophers = init_philosophers(number_of_philosophers);
-	simulation->forks = init_forks(number_of_philosophers);
+	ft_bzero(simulation, sizeof(t_simulation));
+	simulation->constants = init_constants(argc, argv);
+	if (!parse_number(argv[1], &simulation->number_of_philosophers) || !simulation->constants)
+		return (destroy_simulation(simulation));
+	simulation->philosophers = init_philosophers(simulation->number_of_philosophers);
+	simulation->forks = init_forks(simulation->number_of_philosophers);
 	if (!simulation->philosophers || !simulation->forks)
 		return (destroy_simulation(simulation));
-	simulation->number_of_philosophers = number_of_philosophers;
 	return (simulation);
 }
 
 void *destroy_simulation(t_simulation *simulation)
 {
-	destroy_forks(simulation->forks, simulation->number_of_philosophers);
-	destroy_philosophers(simulation->philosophers, simulation->number_of_philosophers);
+	destroy_forks(simulation->forks);
+	destroy_philosophers(simulation->philosophers);
 
 	return (NULL);
 }
 
-void *destroy_forks(pthread_mutex_t *forks, size_t number_of_forks)
+void *destroy_forks(pthread_mutex_t *forks)
 {
-	size_t index;
+	// size_t index;
 
-	index = 0;
-	while (index < number_of_forks)
-	{
-		pthread_mutex_destroy(&forks[index]);
-		index++;
-	}
-	free(forks);
+	// index = 0;
+	// while (&(forks + (sizeof(pthread_mutex_t) * index)))
+	// {
+	// 	pthread_mutex_destroy(&forks[index]);
+	// 	index++;
+	// }
+	// free(forks);
 	return (NULL);
 }
 
-pthread_mutex_t *init_forks(size_t number_of_philosophers)
+pthread_mutex_t *init_forks(size_t number_of_forks)
 {
 	pthread_mutex_t *forks;
 	size_t index;
 
 	index = 0;
-	forks = malloc(sizeof(pthread_mutex_t) * number_of_philosophers);
+	forks = malloc(sizeof(pthread_mutex_t) * (number_of_forks + 1));
 	if (!forks)
 		return (NULL);
-	while (index < number_of_philosophers)
+	ft_bzero(forks, sizeof(pthread_mutex_t) * (number_of_forks + 1));
+	while (index < number_of_forks)
 	{
 		if (pthread_mutex_init(&forks[index], NULL) != 0)
-			return (destroy_forks(forks, index));
+			return (destroy_forks(forks));
 		index++;
 	}
 	return (forks);
@@ -140,30 +216,31 @@ t_philosopher *init_philosophers(size_t number_of_philosophers)
 	size_t index;
  
 	index = 0;
-	philosophers = malloc(sizeof(t_philosopher) * number_of_philosophers);
+	philosophers = malloc(sizeof(t_philosopher) * (number_of_philosophers + 1));
 	if (!philosophers)
 		return (NULL);
+	ft_bzero(philosophers, sizeof(t_philosopher) * (number_of_philosophers + 1));
 	while (index < number_of_philosophers)
 	{
 		if (!init_philosopher(&philosophers[index], index))
-			return (destroy_philosophers(philosophers, index));
+			return (destroy_philosophers(philosophers));
 		index++;
 	}
 	return (philosophers);
 }
 
-void *destroy_philosophers(t_philosopher *philosophers, size_t number_of_philosophers)
+void *destroy_philosophers(t_philosopher *philosophers)
 {
 	size_t index;
 
-	index = 0;
-	while (index < number_of_philosophers)
-	{
-		pthread_detach(philosophers[index].thread);
-		philosophers[index].state = DEAD;
-		index++;
-	}
-	free(philosophers);
+	// index = 0;
+	// while (0)
+	// {
+	// 	pthread_detach(philosophers[index].thread);
+	// 	philosophers[index].state = DEAD;
+	// 	index++;
+	// }
+	// free(philosophers);
 	return (NULL);
 }
 
@@ -224,11 +301,6 @@ bool is_in_bounds(long value, long lower, long upper)
 	return (true);
 }
 
-#define NUMBER_OF_PHILOSOPHERS 1
-#define TIME_TO_DIE 2
-#define TIME_TO_EAT 3
-#define TIME_TO_SLEEP 4
-#define NUMBER_OF_MEALS 5
 
 int parse_arguments(t_constants *constants, int *nop, char *argv[], int argc)
 {
@@ -281,14 +353,7 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 		return (1);
 	constants = malloc(sizeof(t_constants));
-	if (!constants)
-		return (2);
-	if (parse_arguments(constants, &number_of_philosophers, argv, argc) != SUCCESS)
-	{
-		printf("Error while parsing arguments\n");
-		return (3);
-	}
-	simulation = init_simulation(number_of_philosophers);
+	simulation = init_simulation(argc, argv);
 	if (!simulation)
 		printf("ERROR: couldn't initialize simulation\n");
 	watcher(simulation);
