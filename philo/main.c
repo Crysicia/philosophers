@@ -25,9 +25,9 @@ typedef enum	e_state { THINKING, HUNGRY, EATING, SLEEPING, DEAD } t_state;
 
 typedef struct	s_constants
 {
-	unsigned int	time_to_eat;
-	unsigned int	time_to_sleep;
-	unsigned int	time_to_die;
+	int	time_to_eat;
+	int	time_to_sleep;
+	int	time_to_die;
 }				t_constants;
 
 typedef struct	s_philosopher
@@ -37,14 +37,13 @@ typedef struct	s_philosopher
 	pthread_t		thread;
 	unsigned int	last_meal;
 	unsigned int	meal_count;
-	t_constants		*constants;
 }				t_philosopher;
 
 typedef struct	s_simulation
 {
 	t_constants		*constants;
-	unsigned int	number_of_philosophers;
-	t_philosopher	*philosophers;
+	int				number_of_philosophers;
+	t_philosopher	**philosophers;
 	pthread_mutex_t	*forks;
 }				t_simulation;
 
@@ -61,40 +60,33 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 
-pthread_mutex_t *init_forks(size_t number_of_philosophers);
-bool init_philosopher(t_philosopher *philosopher, size_t index);
-void display_message(size_t id, t_state state);
-void *routine(void *arg);
-void *destroy_simulation(t_simulation *simulation);
-void *destroy_forks(pthread_mutex_t *forks);
-void *destroy_philosophers(t_philosopher *philosophers);
-t_philosopher *init_philosophers(size_t number_of_philosophers);
-long	ft_atol(const char *str);
+pthread_mutex_t	*init_forks(size_t number_of_philosophers);
+bool			init_philosopher(t_philosopher **philosopher, size_t index);
+void 			display_message(size_t id, t_state state);
+void 			*routine(void *arg);
+void 			*destroy_simulation(t_simulation *simulation);
+void 			*destroy_forks(pthread_mutex_t *forks);
+void 			*destroy_philosophers(t_philosopher **philosophers);
+t_philosopher	**init_philosophers(size_t number_of_philosophers);
+int				ft_atoi(const char *str);
 
-long	ft_atol(const char *str)
+int ft_atoi(const char *str)
 {
-	long long	total;
-	int			sign;
-	size_t		index;
+	int total;
 
 	total = 0;
-	sign = 1;
-	index = 0;
-	while ((str[index] >= 9 && 13 >= str[index]) || str[index] == 32)
-		index++;
-	if (str[index] == '-' || str[index] == '+')
+	if (!str)
+		return (-1);
+	while (*str)
 	{
-		if (str[index] == '-')
-			sign = -1;
-		index++;
+		if (*str < '0' || *str > '9')
+			return (-1);
+		total += (total * 10) + *str - '0';
+		if (total < 0)
+			return (-1);
+		str++;
 	}
-	while (str[index] >= '0' && '9' >= str[index])
-	{
-		total *= 10;
-		total += str[index] - '0';
-		index++;
-	}
-	return (total * sign);
+	return (total);
 }
 
 // t_simulation *init_simulation(size_t number_of_philosophers)
@@ -113,37 +105,19 @@ long	ft_atol(const char *str)
 // 	return (simulation);
 // }
 
-bool contain_only_numbers(char *str)
-{
-	while (*str >= '0' && *str <= '9')
-		str++;
-	return (*str == '\0');
-}
-
-bool parse_number(char *arg, unsigned int *target)
-{
-	long parsed_number;
-
-	if (!contain_only_numbers(arg))
-		return (false);
-	parsed_number = ft_atol(arg);
-	if (parsed_number < 0|| parsed_number > INT_MAX)
-		return (false);
-	*target = (unsigned int)parsed_number;
-	return (true);
-}
-
 t_constants *init_constants(int argc, char *argv[])
 {
 	t_constants *constants;
 
 	constants = malloc(sizeof(t_constants));
-	ft_bzero(constants, sizeof(t_constants));
 	if (!constants)
 		return (NULL);
-	if (!parse_number(argv[2], &constants->time_to_die)
-		|| !parse_number(argv[3], &constants->time_to_eat)
-		|| !parse_number(argv[4], &constants->time_to_sleep))
+	constants->time_to_die = ft_atoi(argv[TIME_TO_DIE]);
+	constants->time_to_eat = ft_atoi(argv[TIME_TO_EAT]);
+	constants->time_to_sleep = ft_atoi(argv[TIME_TO_SLEEP]);
+	if (constants->time_to_die == -1
+		|| constants->time_to_eat == -1
+		|| constants->time_to_sleep == -1)
 	{
 		free(constants);
 		return (NULL);
@@ -160,7 +134,8 @@ t_simulation *init_simulation(int argc, char *argv[])
 		return (NULL);
 	ft_bzero(simulation, sizeof(t_simulation));
 	simulation->constants = init_constants(argc, argv);
-	if (!parse_number(argv[1], &simulation->number_of_philosophers) || !simulation->constants)
+	simulation->number_of_philosophers = ft_atoi(argv[NUMBER_OF_PHILOSOPHERS]);
+	if (simulation->number_of_philosophers == -1 || !simulation->constants)
 		return (destroy_simulation(simulation));
 	simulation->philosophers = init_philosophers(simulation->number_of_philosophers);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
@@ -173,7 +148,6 @@ void *destroy_simulation(t_simulation *simulation)
 {
 	destroy_forks(simulation->forks);
 	destroy_philosophers(simulation->philosophers);
-
 	return (NULL);
 }
 
@@ -210,26 +184,26 @@ pthread_mutex_t *init_forks(size_t number_of_forks)
 	return (forks);
 }
 
-t_philosopher *init_philosophers(size_t number_of_philosophers)
+t_philosopher **init_philosophers(size_t number_of_philosophers)
 {
-	t_philosopher *philosophers;
+	t_philosopher **philosophers;
 	size_t index;
  
 	index = 0;
-	philosophers = malloc(sizeof(t_philosopher) * (number_of_philosophers + 1));
+	philosophers = malloc(sizeof(t_philosopher *) * (number_of_philosophers + 1));
 	if (!philosophers)
 		return (NULL);
-	ft_bzero(philosophers, sizeof(t_philosopher) * (number_of_philosophers + 1));
+	ft_bzero(philosophers, sizeof(t_philosopher *) * (number_of_philosophers + 1));
 	while (index < number_of_philosophers)
 	{
-		if (!init_philosopher(&philosophers[index], index))
+		if (!init_philosopher(&(philosophers[index]), index))
 			return (destroy_philosophers(philosophers));
 		index++;
 	}
 	return (philosophers);
 }
 
-void *destroy_philosophers(t_philosopher *philosophers)
+void *destroy_philosophers(t_philosopher **philosophers)
 {
 	size_t index;
 
@@ -244,11 +218,15 @@ void *destroy_philosophers(t_philosopher *philosophers)
 	return (NULL);
 }
 
-bool init_philosopher(t_philosopher *philosopher, size_t index)
+bool init_philosopher(t_philosopher **philosopher, size_t index)
 {
-	philosopher->state = THINKING;
-	philosopher->index = index;
-	if (pthread_create(&philosopher->thread, NULL, &routine, philosopher) != 0)
+	*philosopher = malloc(sizeof(t_philosopher));
+	printf("CALLED INIT PHILO\n");
+	if (!philosopher)
+		return (NULL);
+	(*philosopher)->state = THINKING;
+	(*philosopher)->index = index;
+	if (pthread_create(&(*philosopher)->thread, NULL, &routine, *philosopher) != 0)
 		return (false);
 	return (true);
 }
@@ -267,7 +245,7 @@ void *routine(void *arg)
 	t_philosopher *philo;
 
 	philo = (t_philosopher *)arg;
-	printf("%0.2zu -> says howdy to you, stranger\n", philo->index);\
+	printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
 	usleep(100);
 	philo->state = DEAD;
 	return (arg);
@@ -282,8 +260,8 @@ int watcher(t_simulation *simulation)
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
-			printf("[%lu] - State: %d\n", index, simulation->philosophers[index].state);
-			if (simulation->philosophers[index].state == DEAD)
+			printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
+			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD)
 			{
 				display_message(index, DEAD);
 				return (ERROR);
@@ -294,72 +272,24 @@ int watcher(t_simulation *simulation)
 	return (SUCCESS);
 }
 
-bool is_in_bounds(long value, long lower, long upper)
-{
-	if (value < lower || value > upper)
-		return (false);
-	return (true);
-}
-
-
-int parse_arguments(t_constants *constants, int *nop, char *argv[], int argc)
-{
-	long			number_of_philosophers;
-	long			time_to_eat;
-	long			time_to_sleep;
-	long			time_to_die;
-
-	if (!constants)
-		return (ERROR);
-	if (argc != 5 && argc != 6)
-		return (ERR_WRONG_NUMBER_OF_ARGUMENTS);
-	number_of_philosophers = ft_atol(argv[NUMBER_OF_PHILOSOPHERS]);
-	if (!is_in_bounds(number_of_philosophers, 0, INT_MAX))
-		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
-	time_to_die = ft_atol(argv[TIME_TO_DIE]);
-	if (!is_in_bounds(time_to_die, 0, INT_MAX))
-		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
-	time_to_eat = ft_atol(argv[TIME_TO_EAT]);
-	if (!is_in_bounds(time_to_eat, 0, INT_MAX))
-		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
-	time_to_sleep = ft_atol(argv[TIME_TO_SLEEP]);
-	if (!is_in_bounds(time_to_sleep, 0, INT_MAX))
-		return (ERR_ARGUMENT_OUT_OF_BOUNDS);
-	if (argc == 6)
-	{
-		printf("Number of meals not implemented yet !\n");
-		// time_to_sleep = ft_atol(argv[TIME_TO_SLEEP]);
-		// if (!is_in_bounds(time_to_sleep, 0, INT_MAX))
-		// 	return (ERR_ARGUMENT_OUT_OF_BOUNDS);
-	}
-	constants->time_to_die = time_to_die;
-	constants->time_to_eat = time_to_eat;
-	constants->time_to_sleep = time_to_sleep;
-	*nop = number_of_philosophers;
-
-	return (SUCCESS);
-}
-
 // To really destroy threads we should unlock all forks then check if the philo is dead, then return from routine and the thread will detach itself
 
 int main(int argc, char *argv[])
 {
 	t_simulation *simulation;
-	t_philosopher *philosophers;
 	t_constants *constants;
 	size_t index = 0;
 	int number_of_philosophers;
 
 	if (argc < 2)
 		return (1);
-	constants = malloc(sizeof(t_constants));
 	simulation = init_simulation(argc, argv);
 	if (!simulation)
 		printf("ERROR: couldn't initialize simulation\n");
 	watcher(simulation);
 	while (index < simulation->number_of_philosophers)
 	{
-		int ret = pthread_join(simulation->philosophers[index].thread, NULL);
+		int ret = pthread_join(((t_philosopher *)simulation->philosophers[index])->thread, NULL);
 		if (ret != 0)
 			printf("Error joining threads: %s\n", strerror(errno));
 		index++;
