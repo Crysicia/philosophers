@@ -1,5 +1,10 @@
-all: main.c
-	gcc -g -g3 -lpthread -Wall -Wextra main.c -o philo
+SRCS =	main.c \
+		initialization.c \
+		destruction.c \
+
+
+all: $(SRCS)
+	gcc -g -g3 -lpthread -Wall -Wextra $(SRCS) -o philo
 
 fclean:
 	rm philo
