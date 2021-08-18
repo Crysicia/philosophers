@@ -1,6 +1,7 @@
 SRCS =	main.c \
 		initialization.c \
 		destruction.c \
+		time.c \
 
 
 all: $(SRCS)

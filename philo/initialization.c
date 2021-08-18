@@ -1,6 +1,6 @@
 #include "initialization.h"
 
-void	ft_bzero(void *s, size_t n);
+void			ft_bzero(void *s, size_t n);
 
 t_constants *init_constants(int argc, char *argv[])
 {
@@ -23,12 +23,6 @@ t_constants *init_constants(int argc, char *argv[])
 }
 
 #include <stdio.h>
-
-unsigned long timeval_to_msec(struct timeval *time)
-{
-	return (time->tv_sec * 1000 + time->tv_usec / 1000);
-}
-
 t_simulation *init_simulation(int argc, char *argv[])
 {
 	t_simulation	*simulation;

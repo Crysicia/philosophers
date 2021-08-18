@@ -3,6 +3,7 @@
 
 #include "destruction.h"
 #include "structs.h"
+#include "time.h"
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/time.h>

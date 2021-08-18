@@ -11,8 +11,6 @@
 #include "initialization.h"
 #include "destruction.h"
 
-unsigned long timeval_to_msec(struct timeval *time);
-
 void	ft_bzero(void *s, size_t n)
 {
 	size_t index;
@@ -49,14 +47,6 @@ int ft_atoi(const char *str)
 	return (total);
 }
 
-unsigned long get_elapsed_time(t_simulation *simulation)
-{
-	struct timeval current_time;
-
-	gettimeofday(&current_time, NULL);
-	return (timeval_to_msec(&current_time) - simulation->starting_time);
-}
-
 void display_message(t_simulation *simulation, size_t id, t_state state)
 {
 	static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
@@ -64,14 +54,29 @@ void display_message(t_simulation *simulation, size_t id, t_state state)
 	printf("%lu: %zu %s\n", get_elapsed_time(simulation), id, messages[state]);
 }
 
+// CPETE
 void *routine(void *arg)
 {
 	t_philosopher *philo;
 
 	philo = (t_philosopher *)arg;
 	printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
-	usleep(990000);
-	philo->state = DEAD;
+	if (philo->index % 2)
+		philo->state = HUNGRY;
+	while (philo->state != DEAD)
+	{
+		if (philo->state == HUNGRY && philo->last_meal < get_current_time() - 999)
+		{
+			philo->state = EATING;
+			philo->last_meal = get_current_time();
+			if (!philo->last_meal)
+				printf("ERROR getting current time\n");
+		}
+		else if (philo->state == HUNGRY && philo->last_meal > get_current_time() + 2000)
+			philo->state = DEAD;
+		else
+			philo->state = HUNGRY;
+	}
 	return (arg);
 }
 
@@ -84,7 +89,7 @@ int watcher(t_simulation *simulation)
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
-			// printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
+			printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
 			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD)
 			{
 				display_message(simulation, index, DEAD);
