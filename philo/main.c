@@ -11,6 +11,8 @@
 #include "initialization.h"
 #include "destruction.h"
 
+unsigned long timeval_to_msec(struct timeval *time);
+
 void	ft_bzero(void *s, size_t n)
 {
 	size_t index;
@@ -23,9 +25,10 @@ void	ft_bzero(void *s, size_t n)
 	}
 }
 
-void 			display_message(size_t id, t_state state);
-void 			*routine(void *arg);
-int				ft_atoi(const char *str);
+void 	display_message(t_simulation *simulation, size_t id, t_state state);
+void 	*routine(void *arg);
+int		ft_atoi(const char *str);
+int		watcher(t_simulation *simulation);
 
 int ft_atoi(const char *str)
 {
@@ -38,7 +41,7 @@ int ft_atoi(const char *str)
 	{
 		if (*str < '0' || *str > '9')
 			return (-1);
-		total += (total * 10) + *str - '0';
+		total = (total * 10) + (*str - '0');
 		if (total < 0)
 			return (-1);
 		str++;
@@ -46,29 +49,19 @@ int ft_atoi(const char *str)
 	return (total);
 }
 
-// t_simulation *init_simulation(size_t number_of_philosophers)
-// {
-// 	t_simulation *simulation;
-
-// 	simulation = malloc(sizeof(t_simulation));
-// 	if (!simulation)
-// 		return (NULL);
-// 	simulation->number_of_philosophers = 0; // BEWARE, if philosophers are initialized but not forks, philos WILL NOT BE freed
-// 	simulation->philosophers = init_philosophers(number_of_philosophers);
-// 	simulation->forks = init_forks(number_of_philosophers);
-// 	if (!simulation->philosophers || !simulation->forks)
-// 		return (destroy_simulation(simulation));
-// 	simulation->number_of_philosophers = number_of_philosophers;
-// 	return (simulation);
-// }
-
-void display_message(size_t id, t_state state)
+unsigned long get_elapsed_time(t_simulation *simulation)
 {
-	struct timeval	current_time;
-	static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
+	struct timeval current_time;
 
 	gettimeofday(&current_time, NULL);
-	printf("%ld: %zu %s\n", current_time.tv_sec, id, messages[state]);
+	return (timeval_to_msec(&current_time) - simulation->starting_time);
+}
+
+void display_message(t_simulation *simulation, size_t id, t_state state)
+{
+	static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
+
+	printf("%lu: %zu %s\n", get_elapsed_time(simulation), id, messages[state]);
 }
 
 void *routine(void *arg)
@@ -77,7 +70,7 @@ void *routine(void *arg)
 
 	philo = (t_philosopher *)arg;
 	printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
-	usleep(100);
+	usleep(990000);
 	philo->state = DEAD;
 	return (arg);
 }
@@ -91,14 +84,15 @@ int watcher(t_simulation *simulation)
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
-			printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
+			// printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
 			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD)
 			{
-				display_message(index, DEAD);
+				display_message(simulation, index, DEAD);
 				return (ERROR);
 			}
 			index++;
 		}
+		usleep(100);
 	}
 	return (SUCCESS);
 }
@@ -116,7 +110,10 @@ int main(int argc, char *argv[])
 		return (1);
 	simulation = init_simulation(argc, argv);
 	if (!simulation)
+	{
 		printf("ERROR: couldn't initialize simulation\n");
+		return (1);
+	}
 	watcher(simulation);
 	while (index < simulation->number_of_philosophers)
 	{

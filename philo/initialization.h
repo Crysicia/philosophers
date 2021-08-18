@@ -5,6 +5,7 @@
 #include "structs.h"
 #include <pthread.h>
 #include <stdbool.h>
+#include <sys/time.h>
 
 void			*routine(void *arg);
 

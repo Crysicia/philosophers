@@ -30,16 +30,17 @@ typedef struct	s_philosopher
 	size_t			index;
 	t_state			state;
 	pthread_t		thread;
-	unsigned int	last_meal;
-	unsigned int	meal_count;
+	unsigned long	last_meal;
+	unsigned long	meal_count;
 }				t_philosopher;
 
 typedef struct	s_simulation
 {
-	t_constants		*constants;
-	int				number_of_philosophers;
-	t_philosopher	**philosophers;
-	pthread_mutex_t	*forks;
+	t_constants			*constants;
+	int					number_of_philosophers;
+	t_philosopher		**philosophers;
+	pthread_mutex_t		*forks;
+	unsigned long		starting_time;
 }				t_simulation;
 
 #endif

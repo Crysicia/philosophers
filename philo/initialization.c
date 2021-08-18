@@ -1,5 +1,7 @@
 #include "initialization.h"
 
+void	ft_bzero(void *s, size_t n);
+
 t_constants *init_constants(int argc, char *argv[])
 {
 	t_constants *constants;
@@ -20,9 +22,17 @@ t_constants *init_constants(int argc, char *argv[])
 	return (constants);
 }
 
+#include <stdio.h>
+
+unsigned long timeval_to_msec(struct timeval *time)
+{
+	return (time->tv_sec * 1000 + time->tv_usec / 1000);
+}
+
 t_simulation *init_simulation(int argc, char *argv[])
 {
-	t_simulation *simulation;
+	t_simulation	*simulation;
+	struct timeval	current_time;
 
 	simulation = malloc(sizeof(t_simulation));
 	if (!simulation)
@@ -30,8 +40,9 @@ t_simulation *init_simulation(int argc, char *argv[])
 	ft_bzero(simulation, sizeof(t_simulation));
 	simulation->constants = init_constants(argc, argv);
 	simulation->number_of_philosophers = ft_atoi(argv[NUMBER_OF_PHILOSOPHERS]);
-	if (simulation->number_of_philosophers == -1 || !simulation->constants)
+	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));
+	simulation->starting_time = timeval_to_msec(&current_time);
 	simulation->philosophers = init_philosophers(simulation->number_of_philosophers);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
 	if (!simulation->philosophers || !simulation->forks)
@@ -42,7 +53,6 @@ t_simulation *init_simulation(int argc, char *argv[])
 bool init_philosopher(t_philosopher **philosopher, size_t index)
 {
 	*philosopher = malloc(sizeof(t_philosopher));
-	printf("CALLED INIT PHILO\n");
 	if (!philosopher)
 		return (NULL);
 	(*philosopher)->state = THINKING;
