@@ -49,33 +49,89 @@ int ft_atoi(const char *str)
 
 void display_message(t_simulation *simulation, size_t id, t_state state)
 {
-	static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
+	// static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
+	static char		*messages[4] = { "is thinking", "is eating", "is sleeping", "died" };
 
 	printf("%lu: %zu %s\n", get_elapsed_time(simulation), id, messages[state]);
+}
+
+bool philo_can_eat(t_philosopher *philosopher)
+{
+	int time_to_die;
+
+	time_to_die = ((t_constants *)((t_simulation *)philosopher->simulation)->constants)->time_to_die;
+	if (philosopher->state == THINKING && philosopher->last_meal < get_current_time() + time_to_die)
+		return (true);
+	return (false);
+}
+
+bool philo_is_starving(t_philosopher *philosopher)
+{
+	int time_to_die;
+
+	time_to_die = ((t_constants *)((t_simulation *)philosopher->simulation)->constants)->time_to_die;
+	if (((philosopher->state == THINKING || philosopher->state == SLEEPING)
+			&& philosopher->last_meal + time_to_die <= get_current_time()) && philosopher->last_meal != 0)
+		return (true);
+	return (false);
+}
+
+bool philo_has_eaten(t_philosopher *philosopher)
+{
+	int time_to_eat;
+
+	time_to_eat = ((t_constants *)((t_simulation *)philosopher->simulation)->constants)->time_to_eat;
+	if (philosopher->state == EATING && philosopher->last_meal + time_to_eat <= get_current_time())
+		return (true);
+	return (false);
+}
+
+void philo_eat(t_philosopher *philosopher)
+{
+	philosopher->last_meal = get_current_time();
+	philosopher->state = EATING;
+	display_message(philosopher->simulation, philosopher->index, philosopher->state);
+}
+
+void philo_sleep(t_philosopher *philosopher)
+{
+	philosopher->last_sleep = get_current_time();
+	philosopher->state = SLEEPING;
+	display_message(philosopher->simulation, philosopher->index, philosopher->state);
+}
+
+void philo_kill(t_philosopher *philosopher)
+{
+	philosopher->state = DEAD;
+	// display_message(philosopher->simulation, philosopher->index, philosopher->state);
 }
 
 // CPETE
 void *routine(void *arg)
 {
+	int time_to_sleep;
 	t_philosopher *philo;
 
 	philo = (t_philosopher *)arg;
-	printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
-	if (philo->index % 2)
-		philo->state = HUNGRY;
+
+	time_to_sleep = ((t_constants *)((t_simulation *)philo->simulation)->constants)->time_to_sleep;
+	// printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
+	// if (philo->index % 2)
+	// 	philo->state = THINKING;
 	while (philo->state != DEAD)
 	{
-		if (philo->state == HUNGRY && philo->last_meal < get_current_time() - 999)
+		if (philo_is_starving(philo))
+			philo_kill(philo);
+		else if (philo_can_eat(philo))
+			philo_eat(philo);
+		else if (philo_has_eaten(philo))
+			philo_sleep(philo);
+		else if (philo->state == SLEEPING && philo->last_sleep + time_to_sleep < get_current_time())
 		{
-			philo->state = EATING;
-			philo->last_meal = get_current_time();
-			if (!philo->last_meal)
-				printf("ERROR getting current time\n");
+			philo->state = THINKING;
+			display_message(philo->simulation, philo->index, philo->state);
 		}
-		else if (philo->state == HUNGRY && philo->last_meal > get_current_time() + 2000)
-			philo->state = DEAD;
-		else
-			philo->state = HUNGRY;
+		usleep(100);
 	}
 	return (arg);
 }
@@ -89,7 +145,7 @@ int watcher(t_simulation *simulation)
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
-			printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
+			// printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
 			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD)
 			{
 				display_message(simulation, index, DEAD);

@@ -1,6 +1,7 @@
 #include "initialization.h"
 
 void			ft_bzero(void *s, size_t n);
+int			ft_atoi(const char *str);
 
 t_constants *init_constants(int argc, char *argv[])
 {
@@ -37,20 +38,23 @@ t_simulation *init_simulation(int argc, char *argv[])
 	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));
 	simulation->starting_time = timeval_to_msec(&current_time);
-	simulation->philosophers = init_philosophers(simulation->number_of_philosophers);
+	simulation->philosophers = init_philosophers(simulation, simulation->number_of_philosophers);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
 	if (!simulation->philosophers || !simulation->forks)
 		return (destroy_simulation(simulation));
 	return (simulation);
 }
 
-bool init_philosopher(t_philosopher **philosopher, size_t index)
+bool init_philosopher(t_simulation *simulation, t_philosopher **philosopher, size_t index)
 {
 	*philosopher = malloc(sizeof(t_philosopher));
 	if (!philosopher)
 		return (NULL);
 	(*philosopher)->state = THINKING;
 	(*philosopher)->index = index;
+	(*philosopher)->last_meal = 0;
+	(*philosopher)->last_sleep = 0;
+	(*philosopher)->simulation = simulation;
 	if (pthread_create(&(*philosopher)->thread, NULL, &routine, *philosopher) != 0)
 		return (false);
 	return (true);
@@ -75,7 +79,7 @@ pthread_mutex_t *init_forks(size_t number_of_forks)
 	return (forks);
 }
 
-t_philosopher **init_philosophers(size_t number_of_philosophers)
+t_philosopher **init_philosophers(t_simulation *simulation, size_t number_of_philosophers)
 {
 	t_philosopher **philosophers;
 	size_t index;
@@ -87,7 +91,7 @@ t_philosopher **init_philosophers(size_t number_of_philosophers)
 	ft_bzero(philosophers, sizeof(t_philosopher *) * (number_of_philosophers + 1));
 	while (index < number_of_philosophers)
 	{
-		if (!init_philosopher(&(philosophers[index]), index))
+		if (!init_philosopher(simulation, &(philosophers[index]), index))
 			return (destroy_philosophers(philosophers));
 		index++;
 	}
