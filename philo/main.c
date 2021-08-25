@@ -60,7 +60,7 @@ bool philo_can_eat(t_philosopher *philosopher)
 	int time_to_die;
 
 	time_to_die = ((t_constants *)((t_simulation *)philosopher->simulation)->constants)->time_to_die;
-	if (philosopher->state == THINKING && philosopher->last_meal < get_current_time() + time_to_die)
+	if (philosopher->state == THINKING)
 		return (true);
 	return (false);
 }
@@ -99,6 +99,8 @@ void philo_eat(t_philosopher *philosopher)
 
 void philo_sleep(t_philosopher *philosopher)
 {
+	pthread_mutex_unlock(philosopher->right_fork);
+	pthread_mutex_unlock(philosopher->left_fork);
 	philosopher->last_sleep = get_current_time();
 	philosopher->state = SLEEPING;
 	display_message(philosopher->simulation, philosopher->index, philosopher->state);
@@ -126,11 +128,6 @@ void *routine(void *arg)
 	// 	philo->state = THINKING;
 	while (philo->state != DEAD)
 	{
-		if (philo->state == EATING && philo->last_meal + ((t_constants *)((t_simulation *)philo->simulation)->constants)->time_to_eat <= get_current_time())
-		{
-			pthread_mutex_unlock(philo->right_fork);
-			pthread_mutex_unlock(philo->left_fork);
-		}
 		if (philo_is_starving(philo))
 			philo_kill(philo);
 		else if (philo_can_eat(philo))
@@ -157,9 +154,10 @@ int watcher(t_simulation *simulation)
 		while (index < simulation->number_of_philosophers)
 		{
 			// printf("[%lu] - State: %d\n", index, ((t_philosopher *)simulation->philosophers[index])->state);
-			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD)
+			if (((t_philosopher *)simulation->philosophers[index])->state == DEAD || philo_is_starving((t_philosopher *)simulation->philosophers[index]))
 			{
 				display_message(simulation, index, DEAD);
+				exit(42);
 				return (ERROR);
 			}
 			index++;
