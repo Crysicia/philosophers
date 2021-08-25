@@ -22,6 +22,7 @@
 
 typedef enum	e_state { THINKING, EATING, SLEEPING, DEAD } t_state;
 // typedef enum	e_error { SUCCESS, ERR_WRONG_NUMBER_OF_ARGUMENTS, ERR_ARGUMENT_OUT_OF_BOUNDS } t_error;
+typedef enum	e_fork_placement { LEFT = -1, RIGHT = 0 } t_fork_placement;
 
 typedef struct	s_simulation t_simulation;
 
@@ -41,6 +42,8 @@ typedef struct	s_philosopher
 	unsigned long	last_meal;
 	unsigned long	last_sleep;
 	unsigned long	meal_count;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 }				t_philosopher;
 
 typedef struct	s_simulation

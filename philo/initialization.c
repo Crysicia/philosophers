@@ -38,11 +38,20 @@ t_simulation *init_simulation(int argc, char *argv[])
 	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));
 	simulation->starting_time = timeval_to_msec(&current_time);
-	simulation->philosophers = init_philosophers(simulation, simulation->number_of_philosophers);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
-	if (!simulation->philosophers || !simulation->forks)
+	if (!simulation->forks)
+		return (destroy_simulation(simulation));
+	simulation->philosophers = init_philosophers(simulation, simulation->number_of_philosophers);
+	if (!simulation->philosophers)
 		return (destroy_simulation(simulation));
 	return (simulation);
+}
+
+int get_fork_placement(int number_of_philosophers, int index, int placement)
+{
+	if (index == 0 && placement == LEFT)
+		return (number_of_philosophers - 1);
+	return (index + placement);
 }
 
 bool init_philosopher(t_simulation *simulation, t_philosopher **philosopher, size_t index)
@@ -55,6 +64,8 @@ bool init_philosopher(t_simulation *simulation, t_philosopher **philosopher, siz
 	(*philosopher)->last_meal = 0;
 	(*philosopher)->last_sleep = 0;
 	(*philosopher)->simulation = simulation;
+	(*philosopher)->left_fork = &simulation->forks[get_fork_placement(simulation->number_of_philosophers, index, -1)];
+	(*philosopher)->right_fork = &simulation->forks[index];
 	if (pthread_create(&(*philosopher)->thread, NULL, &routine, *philosopher) != 0)
 		return (false);
 	return (true);

@@ -52,7 +52,7 @@ void display_message(t_simulation *simulation, size_t id, t_state state)
 	// static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
 	static char		*messages[4] = { "is thinking", "is eating", "is sleeping", "died" };
 
-	printf("%lu: %zu %s\n", get_elapsed_time(simulation), id, messages[state]);
+	printf("%lu %zu %s\n", get_elapsed_time(simulation), id, messages[state]);
 }
 
 bool philo_can_eat(t_philosopher *philosopher)
@@ -70,8 +70,10 @@ bool philo_is_starving(t_philosopher *philosopher)
 	int time_to_die;
 
 	time_to_die = ((t_constants *)((t_simulation *)philosopher->simulation)->constants)->time_to_die;
-	if (((philosopher->state == THINKING || philosopher->state == SLEEPING)
-			&& philosopher->last_meal + time_to_die <= get_current_time()) && philosopher->last_meal != 0)
+	// if (((philosopher->state == THINKING || philosopher->state == SLEEPING)
+	// 		&& philosopher->last_meal + time_to_die <= get_current_time()) && philosopher->last_meal != 0)
+	// 	return (true);
+	if ((philosopher->last_meal + time_to_die <= get_current_time()) && philosopher->last_meal != 0)
 		return (true);
 	return (false);
 }
@@ -88,6 +90,8 @@ bool philo_has_eaten(t_philosopher *philosopher)
 
 void philo_eat(t_philosopher *philosopher)
 {
+	pthread_mutex_lock(philosopher->left_fork);
+	pthread_mutex_lock(philosopher->right_fork);
 	philosopher->last_meal = get_current_time();
 	philosopher->state = EATING;
 	display_message(philosopher->simulation, philosopher->index, philosopher->state);
@@ -115,11 +119,18 @@ void *routine(void *arg)
 	philo = (t_philosopher *)arg;
 
 	time_to_sleep = ((t_constants *)((t_simulation *)philo->simulation)->constants)->time_to_sleep;
+	if (philo->index % 2)
+		usleep(time_to_sleep);
 	// printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
 	// if (philo->index % 2)
 	// 	philo->state = THINKING;
 	while (philo->state != DEAD)
 	{
+		if (philo->state == EATING && philo->last_meal + ((t_constants *)((t_simulation *)philo->simulation)->constants)->time_to_eat <= get_current_time())
+		{
+			pthread_mutex_unlock(philo->right_fork);
+			pthread_mutex_unlock(philo->left_fork);
+		}
 		if (philo_is_starving(philo))
 			philo_kill(philo);
 		else if (philo_can_eat(philo))
