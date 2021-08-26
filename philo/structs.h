@@ -2,6 +2,7 @@
 #define STRUCTS_H
 
 #include <pthread.h>
+#include <stdbool.h>
 
 #define SUCCESS	0
 #define ERROR	1
@@ -53,6 +54,7 @@ typedef struct	s_simulation
 	t_philosopher		**philosophers;
 	pthread_mutex_t		*forks;
 	unsigned long		starting_time;
+	bool				running;
 }				t_simulation;
 
 #endif

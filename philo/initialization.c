@@ -3,7 +3,7 @@
 void			ft_bzero(void *s, size_t n);
 int			ft_atoi(const char *str);
 
-t_constants *init_constants(int argc, char *argv[])
+t_constants *init_constants(char *argv[])
 {
 	t_constants *constants;
 
@@ -24,7 +24,7 @@ t_constants *init_constants(int argc, char *argv[])
 }
 
 #include <stdio.h>
-t_simulation *init_simulation(int argc, char *argv[])
+t_simulation *init_simulation(char *argv[])
 {
 	t_simulation	*simulation;
 	struct timeval	current_time;
@@ -33,7 +33,8 @@ t_simulation *init_simulation(int argc, char *argv[])
 	if (!simulation)
 		return (NULL);
 	ft_bzero(simulation, sizeof(t_simulation));
-	simulation->constants = init_constants(argc, argv);
+	simulation->running = true;
+	simulation->constants = init_constants(argv);
 	simulation->number_of_philosophers = ft_atoi(argv[NUMBER_OF_PHILOSOPHERS]);
 	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));

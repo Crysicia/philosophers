@@ -23,7 +23,7 @@ void *destroy_forks(pthread_mutex_t *forks)
 
 void *destroy_philosophers(t_philosopher **philosophers)
 {
-	size_t index;
+	// size_t index;
 
 	// index = 0;
 	// while (0)
