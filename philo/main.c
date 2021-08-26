@@ -52,7 +52,6 @@ void display_message(t_simulation *simulation, size_t id, t_state state)
 	// static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
 	static char		*messages[4] = { "is thinking\n", "is eating\n", "is sleeping\n", "died\n" };
 	// static int		str_len[4] = { 12, 10, 12, 5 };
-
 	printf("%lu %zu %s", get_elapsed_time(simulation), id + 1, messages[state]);
 }
 
@@ -145,7 +144,7 @@ void *routine(void *arg)
 
 	time_to_sleep = ((t_constants *)((t_simulation *)philo->simulation)->constants)->time_to_sleep;
 	if (philo->index % 2)
-		usleep(time_to_sleep);
+		usleep(100);
 	// printf("%0.2zu -> says howdy to you, stranger\n", philo->index);
 	// if (philo->index % 2)
 	// 	philo->state = THINKING;

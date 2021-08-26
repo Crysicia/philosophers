@@ -17,10 +17,6 @@
 #define NUMBER_OF_MEALS 5
 #define USAGE "philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] <number_of_meal>"
 
-#define T_TO_DIE 500
-#define T_TO_EAT 300
-#define T_TO_SLEEP 3000
-
 typedef enum	e_state { THINKING, EATING, SLEEPING, DEAD } t_state;
 // typedef enum	e_error { SUCCESS, ERR_WRONG_NUMBER_OF_ARGUMENTS, ERR_ARGUMENT_OUT_OF_BOUNDS } t_error;
 typedef enum	e_fork_placement { LEFT = -1, RIGHT = 0 } t_fork_placement;
@@ -55,6 +51,9 @@ typedef struct	s_simulation
 	pthread_mutex_t		*forks;
 	unsigned long		starting_time;
 	bool				running;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					time_to_die;
 }				t_simulation;
 
 #endif

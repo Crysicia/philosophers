@@ -23,7 +23,6 @@ t_constants *init_constants(char *argv[])
 	return (constants);
 }
 
-#include <stdio.h>
 t_simulation *init_simulation(char *argv[])
 {
 	t_simulation	*simulation;
@@ -35,6 +34,13 @@ t_simulation *init_simulation(char *argv[])
 	ft_bzero(simulation, sizeof(t_simulation));
 	simulation->running = true;
 	simulation->constants = init_constants(argv);
+	simulation->time_to_die = ft_atoi(argv[TIME_TO_DIE]);
+	simulation->time_to_eat = ft_atoi(argv[TIME_TO_EAT]);
+	simulation->time_to_sleep = ft_atoi(argv[TIME_TO_SLEEP]);
+	if (simulation->time_to_die == -1
+		|| simulation->time_to_eat == -1
+		|| simulation->time_to_sleep == -1)
+		return (destroy_simulation(simulation));
 	simulation->number_of_philosophers = ft_atoi(argv[NUMBER_OF_PHILOSOPHERS]);
 	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));
