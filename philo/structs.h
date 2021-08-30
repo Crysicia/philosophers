@@ -23,13 +23,6 @@ typedef enum	e_fork_placement { LEFT = -1, RIGHT = 0 } t_fork_placement;
 
 typedef struct	s_simulation t_simulation;
 
-typedef struct	s_constants
-{
-	int	time_to_eat;
-	int	time_to_sleep;
-	int	time_to_die;
-}				t_constants;
-
 typedef struct	s_philosopher
 {
 	t_simulation	*simulation;
@@ -45,7 +38,6 @@ typedef struct	s_philosopher
 
 typedef struct	s_simulation
 {
-	t_constants			*constants;
 	int					number_of_philosophers;
 	t_philosopher		**philosophers;
 	pthread_mutex_t		*forks;

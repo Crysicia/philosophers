@@ -11,7 +11,6 @@
 
 void			*routine(void *arg);
 
-t_constants		*init_constants(char *argv[]);
 t_simulation	*init_simulation(char *argv[]);
 bool			init_philosopher(t_simulation *simulation, t_philosopher **philosopher, size_t index);
 pthread_mutex_t	*init_forks(size_t number_of_forks);

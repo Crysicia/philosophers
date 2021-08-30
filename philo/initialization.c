@@ -3,26 +3,6 @@
 void			ft_bzero(void *s, size_t n);
 int			ft_atoi(const char *str);
 
-t_constants *init_constants(char *argv[])
-{
-	t_constants *constants;
-
-	constants = malloc(sizeof(t_constants));
-	if (!constants)
-		return (NULL);
-	constants->time_to_die = ft_atoi(argv[TIME_TO_DIE]);
-	constants->time_to_eat = ft_atoi(argv[TIME_TO_EAT]);
-	constants->time_to_sleep = ft_atoi(argv[TIME_TO_SLEEP]);
-	if (constants->time_to_die == -1
-		|| constants->time_to_eat == -1
-		|| constants->time_to_sleep == -1)
-	{
-		free(constants);
-		return (NULL);
-	}
-	return (constants);
-}
-
 t_simulation *init_simulation(char *argv[])
 {
 	t_simulation	*simulation;
@@ -33,7 +13,6 @@ t_simulation *init_simulation(char *argv[])
 		return (NULL);
 	ft_bzero(simulation, sizeof(t_simulation));
 	simulation->running = true;
-	simulation->constants = init_constants(argv);
 	simulation->time_to_die = ft_atoi(argv[TIME_TO_DIE]);
 	simulation->time_to_eat = ft_atoi(argv[TIME_TO_EAT]);
 	simulation->time_to_sleep = ft_atoi(argv[TIME_TO_SLEEP]);
@@ -42,7 +21,7 @@ t_simulation *init_simulation(char *argv[])
 		|| simulation->time_to_sleep == -1)
 		return (destroy_simulation(simulation));
 	simulation->number_of_philosophers = ft_atoi(argv[NUMBER_OF_PHILOSOPHERS]);
-	if (simulation->number_of_philosophers == -1 || !simulation->constants || gettimeofday(&current_time, NULL))
+	if (simulation->number_of_philosophers == -1 || gettimeofday(&current_time, NULL))
 		return (destroy_simulation(simulation));
 	simulation->starting_time = timeval_to_msec(&current_time);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
