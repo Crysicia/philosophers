@@ -5,9 +5,10 @@ SRCS =	main.c \
 
 
 all: $(SRCS)
-	gcc -g -g3 -lpthread -Wall -Wextra $(SRCS) -o philo
+	gcc -g -g3 -lpthread -Wall -Wextra -fsanitize=thread $(SRCS) -o philo
 
 fclean:
 	rm philo
 
 re: fclean all
+# -fsanitize=thread

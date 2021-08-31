@@ -17,7 +17,7 @@
 #define NUMBER_OF_MEALS 5
 #define USAGE "philo [number_of_philosophers] [time_to_die] [time_to_eat] [time_to_sleep] <number_of_meal>"
 
-typedef enum	e_state { THINKING, EATING, SLEEPING, DEAD } t_state;
+typedef enum	e_state { THINKING, FORK, EATING, SLEEPING, DEAD } t_state;
 // typedef enum	e_error { SUCCESS, ERR_WRONG_NUMBER_OF_ARGUMENTS, ERR_ARGUMENT_OUT_OF_BOUNDS } t_error;
 typedef enum	e_fork_placement { LEFT = -1, RIGHT = 0 } t_fork_placement;
 
