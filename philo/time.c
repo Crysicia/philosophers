@@ -18,3 +18,12 @@ unsigned long	timeval_to_msec(struct timeval *time)
 {
 	return (time->tv_sec * 1000 + time->tv_usec / 1000);
 }
+
+void ft_usleep(unsigned long duration)
+{
+	unsigned long target_time;
+
+	target_time = (get_current_time() * 1000) + duration;
+	while (get_current_time() * 1000 <= target_time)
+		usleep(100);
+}

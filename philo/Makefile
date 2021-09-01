@@ -2,10 +2,11 @@ SRCS =	main.c \
 		initialization.c \
 		destruction.c \
 		time.c \
+		actions.c \
 
 
 all: $(SRCS)
-	gcc -g -g3 -lpthread -Wall -Wextra -fsanitize=thread $(SRCS) -o philo
+	gcc -g -g3 -lpthread -Wall -Wextra  $(SRCS) -o philo
 
 fclean:
 	rm philo
