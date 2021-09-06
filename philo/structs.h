@@ -26,6 +26,7 @@ typedef struct	s_simulation t_simulation;
 typedef struct	s_philosopher
 {
 	t_simulation	*simulation;
+	unsigned long	starting_time;
 	size_t			index;
 	t_state			state;
 	pthread_t		thread;

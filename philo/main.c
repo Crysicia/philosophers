@@ -37,6 +37,20 @@ int ft_atoi(const char *str)
 	return (total);
 }
 
+unsigned long elapsed_time(unsigned long current_time, t_philosopher *philosopher)
+{
+	return (get_current_time() - ((t_simulation *)philosopher->simulation)->starting_time);
+}
+
+void new_display_message(t_philosopher *philosopher, unsigned long current_time)
+{
+	// static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
+	static char		*messages[5] = { "is thinking\n", "has taken a fork\n", "is eating\n", "is sleeping\n", "died\n" };
+	// static int		str_len[5] = { 12, 17, 10, 12, 5 };
+	// write(1, messages[state], str_len[state]);
+	printf("%lu %zu %s", elapsed_time(current_time, philosopher), philosopher->index + 1, messages[philosopher->state]);
+}
+
 void display_message(t_simulation *simulation, size_t id, t_state state)
 {
 	// static char		*messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
@@ -56,7 +70,7 @@ void philo_take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)
 	pthread_mutex_lock(fork);
 	if (!simulation->running)
 		return ;
-	display_message(simulation, philosopher->index, FORK);
+	new_display_message(philosopher, 0);
 }
 
 void philo_put_fork(pthread_mutex_t *fork)
@@ -97,13 +111,13 @@ void *routine(void *arg)
 	{
 		current_time = get_current_time();
 		if (philo_can_eat(philo))
-			philo_eat(philo);
+			philo_eat(philo, current_time);
 		else if (philo_has_eaten(philo, current_time))
-			philo_sleep(philo);
+			philo_sleep(philo, current_time);
 		else if (philo->state == SLEEPING && philo->last_sleep + time_to_sleep <= current_time)
 		{
 			philo->state = THINKING;
-			display_message(philo->simulation, philo->index, philo->state);
+			new_display_message(philo, current_time);
 		}
 		usleep(100);
 	}

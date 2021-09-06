@@ -52,6 +52,7 @@ bool init_philosopher(t_simulation *simulation, t_philosopher **philosopher, siz
 	(*philosopher)->simulation = simulation;
 	(*philosopher)->left_fork = &simulation->forks[get_fork_placement(simulation->number_of_philosophers, index, -1)];
 	(*philosopher)->right_fork = &simulation->forks[index];
+	(*philosopher)->starting_time = simulation->starting_time;
 	// if (pthread_create(&(*philosopher)->thread, NULL, &routine, *philosopher) != 0)
 	// 	return (false);
 	return (true);

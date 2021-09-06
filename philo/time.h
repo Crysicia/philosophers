@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include <sys/time.h>
+#include <unistd.h>
 
 unsigned long	get_elapsed_time(t_simulation *simulation);
 unsigned long	get_current_time(void);

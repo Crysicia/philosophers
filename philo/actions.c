@@ -1,6 +1,6 @@
 #include "actions.h"
 
-void philo_sleep(t_philosopher *philosopher)
+void philo_sleep(t_philosopher *philosopher, unsigned long current_time)
 {
 	int time_to_sleep;
 
@@ -9,11 +9,11 @@ void philo_sleep(t_philosopher *philosopher)
 	philo_put_fork(philosopher->right_fork);
 	philosopher->last_sleep = get_current_time();
 	philosopher->state = SLEEPING;
-	display_message(philosopher->simulation, philosopher->index, philosopher->state);
+	new_display_message(philosopher, current_time);
 	ft_usleep((time_to_sleep * 1000) - 10);
 }
 
-void philo_eat(t_philosopher *philosopher)
+void philo_eat(t_philosopher *philosopher, unsigned long current_time)
 {
 	int time_to_eat;
 
@@ -28,7 +28,7 @@ void philo_eat(t_philosopher *philosopher)
 	}
 	philosopher->last_meal = get_current_time();
 	philosopher->state = EATING;
-	display_message(philosopher->simulation, philosopher->index, philosopher->state);
+	new_display_message(philosopher, current_time);
 	ft_usleep((time_to_eat * 1000) - 10);
 }
 
