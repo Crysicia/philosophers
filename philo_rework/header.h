@@ -27,18 +27,22 @@ typedef struct	s_philosopher
 	pthread_mutex_t	*right_fork;
 }				t_philosopher;
 
-#define NUMBER_OF_PHILOSOPHERS 1
-#define TIME_TO_DIE 2
-#define TIME_TO_EAT 3
-#define TIME_TO_SLEEP 4
-#define NUMBER_OF_MEALS 5
+#define NUMBER_OF_PHILOSOPHERS	1
+#define TIME_TO_DIE				2
+#define TIME_TO_EAT				3
+#define TIME_TO_SLEEP			4
+#define NUMBER_OF_MEALS			5
 
 // ---- ERRORS ----
 
 #define ERR_COULD_NOT_INITIALIZE_PHILOS 1
+#define ERR_COULD_NOT_INITIALIZE_FORKS	2
 
 
 // ---- PARSING ----
 t_simulation *parse_arguments(int argc, char *argv[]);
+
+// ---- SIMULATION ----
+unsigned int launch_simulation(t_simulation *simulation);
 
 #endif

@@ -10,5 +10,5 @@ int main(int argc, char *argv[])
 		printf("ERROR: Unexpected error when parsing arguments\n");
 		return (1);
 	}
-	lauch_simulation(simulation);
+	launch_simulation(simulation);
 }

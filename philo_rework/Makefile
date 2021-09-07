@@ -4,7 +4,8 @@ RM 			=	rm -f
 NAME 		=	philo
 LIBS 		=	-lpthread
 SRCS 		=	main.c \
-				parsing.c
+				parsing.c \
+				simulation.c
 OBJS 		= $(SRCS:.c=.o)
 
 all: $(NAME)
