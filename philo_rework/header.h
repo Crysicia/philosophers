@@ -21,6 +21,7 @@ typedef struct	s_philosopher
 {
 	int				index;
 	t_state 		state; 
+	pthread_t		thread;
 	unsigned long	last_meal; 
 	unsigned long	last_sleep;
 	pthread_mutex_t	*left_fork;
@@ -34,9 +35,16 @@ typedef struct	s_philosopher
 #define NUMBER_OF_MEALS			5
 
 // ---- ERRORS ----
+#define NUMBER_OF_ERRORS				3
 
+#define SUCCESS							0
 #define ERR_COULD_NOT_INITIALIZE_PHILOS 1
 #define ERR_COULD_NOT_INITIALIZE_FORKS	2
+#define ERR_COULD_NOT_CREATE_THREAD		3
+
+#define MSG_COULD_NOT_INITIALIZE_PHILOS	"Could not initialize philosophers"
+#define MSG_COULD_NOT_INITIALIZE_FORKS	"Could not initialize forks"
+#define MSG_COULD_NOT_CREATE_THREAD 	"Could not create thread"
 
 
 // ---- PARSING ----
