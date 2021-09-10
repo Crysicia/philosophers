@@ -6,7 +6,7 @@ void print_err(unsigned int code)
 	char *message;
 
 	message = MSG_UNEXPECTED_ERR;
-	if (code < NUMBER_OF_ERRORS)
+	if (code <= NUMBER_OF_ERRORS)
 		message = errors[code - 1];
 	dprintf(STDERR_FILENO, "ERROR: %s\n", message);
 }
