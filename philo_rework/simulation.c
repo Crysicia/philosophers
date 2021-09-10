@@ -131,5 +131,5 @@ unsigned int launch_simulation(t_simulation *simulation)
 	if (!launch_threads(philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
 	wait_threads(philosophers, simulation->number_of_philosophers);
-	return (0);
+	return (SUCCESS);
 }

@@ -45,6 +45,7 @@ typedef struct	s_philosopher
 #define MSG_COULD_NOT_INITIALIZE_PHILOS	"Could not initialize philosophers"
 #define MSG_COULD_NOT_INITIALIZE_FORKS	"Could not initialize forks"
 #define MSG_COULD_NOT_CREATE_THREAD 	"Could not create thread"
+#define MSG_UNEXPECTED_ERR			 	"Unexpected error"
 
 
 // ---- PARSING ----
