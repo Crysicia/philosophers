@@ -128,7 +128,7 @@ unsigned int launch_simulation(t_simulation *simulation)
 	}
 	// for (int i = 0; i < simulation->number_of_philosophers; i++)
 	// 	printf("------- Number %02d -------\n- Fork L = %p\n- Fork R = %p\n- State = %d\n-------------------------\n", philosophers[i].index, philosophers[i].left_fork, philosophers[i].right_fork, philosophers[i].state);
-	if (launch_threads(philosophers, simulation->number_of_philosophers))
+	if (!launch_threads(philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
 	wait_threads(philosophers, simulation->number_of_philosophers);
 	return (0);
