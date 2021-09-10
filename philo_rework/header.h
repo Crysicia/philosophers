@@ -11,20 +11,21 @@
 typedef enum	e_state { THINKING, FORK, EATING, SLEEPING, DEAD } t_state;
 typedef struct	s_simulation
 {
-	int number_of_philosophers;
-	int time_to_die;
-	int time_to_eat;
-	int time_to_sleep;
-	int number_of_meals;
+	int				number_of_philosophers;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				number_of_meals;
+	unsigned long	starting_time;
 }				t_simulation;
 typedef struct	s_philosopher
 {
 	int				index;
 	t_state 		state; 
 	pthread_t		thread;
+	t_simulation	*simulation;
 	unsigned long	last_meal; 
 	unsigned long	last_sleep;
-	unsigned long	starting_time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 }				t_philosopher;
@@ -57,14 +58,14 @@ unsigned int	launch_simulation(t_simulation *simulation);
 
 // ---- INIT ----
 void			destroy_philosophers(t_philosopher *philosophers, int number_of_philosophers);
-t_philosopher	*init_philosophers(int number_of_philosophers, pthread_mutex_t *forks);
+t_philosopher	*init_philosophers(t_simulation *simulation, pthread_mutex_t *forks);
 void			destroy_forks(pthread_mutex_t *forks, int number_of_forks);
 pthread_mutex_t	*init_forks(int number_of_forks);
 
 // ---- ACTIONS----
-void			philo_eat(void);
-void			philo_sleep(void);
-void			philo_think(void);
+void			philo_eat(t_philosopher *philosopher);
+void			philo_sleep(t_philosopher *philosopher);
+void			philo_think(t_philosopher *philosopher);
 
 // ---- TIME ----
 unsigned long	get_current_time(void);

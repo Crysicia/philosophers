@@ -11,7 +11,7 @@ unsigned long	get_current_time(void)
 
 unsigned long get_elapsed_time(t_philosopher *philosopher)
 {
-	return (get_current_time() - philosopher->starting_time);
+	return (get_current_time() - philosopher->simulation->starting_time);
 }
 
 unsigned long	timeval_to_msec(struct timeval *time)

@@ -13,34 +13,34 @@ void destroy_philosophers(t_philosopher *philosophers, int number_of_philosopher
 	free(philosophers);
 }
 
-bool init_single_philosopher(t_philosopher *philosopher, int index, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork, unsigned long current_time)
+bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation *simulation, pthread_mutex_t *forks)
 {
 	// if (pthread_create(&philosopher->thread))
 	// 	return (false);
+	philosopher->simulation		= simulation;
 	philosopher->index			= index;
-	philosopher->left_fork		= left_fork;
-	philosopher->right_fork		= right_fork;
+	philosopher->left_fork		= &forks[index];
+	philosopher->right_fork		= &forks[(index + 1) % simulation->number_of_philosophers];
 	philosopher->state			= THINKING;
 	philosopher->last_meal		= 0;
 	philosopher->last_sleep		= 0;
-	philosopher->starting_time	= current_time;
 	return (true);
 }
 
-t_philosopher *init_philosophers(int number_of_philosophers, pthread_mutex_t *forks)
+t_philosopher *init_philosophers(t_simulation *simulation, pthread_mutex_t *forks)
 {
 	int index;
+	int number_of_philosophers;
 	t_philosopher *philosophers;
-	unsigned long current_time;
 
 	index = 0;
-	current_time = get_current_time();
+	number_of_philosophers = simulation->number_of_philosophers;
 	philosophers = malloc(sizeof(t_philosopher) * number_of_philosophers);
 	if (!philosophers)
 		return (NULL);
 	while (index < number_of_philosophers)
 	{
-		if (!init_single_philosopher(&philosophers[index], index, &forks[index], &forks[(index + 1) % number_of_philosophers], current_time))
+		if (!init_single_philosopher(&philosophers[index], index, simulation, forks))
 		{
 			free(philosophers);
 			return (NULL);

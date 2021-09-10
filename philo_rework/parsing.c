@@ -26,10 +26,11 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	simulation = malloc(sizeof(t_simulation));
 	if (!simulation)
 		return (NULL);
-	simulation->number_of_philosophers = ft_atoi_strict(argv[NUMBER_OF_PHILOSOPHERS]);
-	simulation->time_to_die = ft_atoi_strict(argv[TIME_TO_DIE]);
-	simulation->time_to_eat = ft_atoi_strict(argv[TIME_TO_EAT]);
-	simulation->time_to_sleep = ft_atoi_strict(argv[TIME_TO_SLEEP]);
+	simulation->number_of_philosophers	= ft_atoi_strict(argv[NUMBER_OF_PHILOSOPHERS]);
+	simulation->time_to_die				= ft_atoi_strict(argv[TIME_TO_DIE]);
+	simulation->time_to_eat				= ft_atoi_strict(argv[TIME_TO_EAT]);
+	simulation->time_to_sleep			= ft_atoi_strict(argv[TIME_TO_SLEEP]);
+	simulation->starting_time			= get_current_time();
 	// simulation->number_of_meals = ft_atoi_strict(argv[NUMBER_OF_MEALS]);
 	if (simulation->number_of_philosophers < 0 || simulation->time_to_die < 0 || simulation->time_to_eat < 0 || simulation->time_to_sleep < 0)
 	{

@@ -45,14 +45,14 @@ unsigned int launch_simulation(t_simulation *simulation)
 	forks = init_forks(simulation->number_of_philosophers);
 	if (!forks)
 		return (ERR_COULD_NOT_INITIALIZE_FORKS);
-	philosophers = init_philosophers(simulation->number_of_philosophers, forks);
+	philosophers = init_philosophers(simulation, forks);
 	if (!philosophers)
 	{
 		destroy_forks(forks, simulation->number_of_philosophers);
 		return (ERR_COULD_NOT_INITIALIZE_PHILOS);
 	}
 	for (int i = 0; i < simulation->number_of_philosophers; i++)
-		printf("------- Number %02d -------\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", philosophers[i].index, philosophers[i].left_fork, philosophers[i].right_fork, philosophers[i].state, philosophers[i].starting_time);
+		printf("------- Number %02d -------\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", philosophers[i].index, philosophers[i].left_fork, philosophers[i].right_fork, philosophers[i].state, philosophers[i].simulation->starting_time);
 	if (!launch_threads(philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
 	wait_threads(philosophers, simulation->number_of_philosophers);
