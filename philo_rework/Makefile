@@ -5,7 +5,10 @@ NAME 		=	philo
 LIBS 		=	-lpthread
 SRCS 		=	main.c \
 				parsing.c \
-				simulation.c
+				simulation.c \
+				init.c \
+				philo_actions.c \
+				time.c
 OBJS 		= $(SRCS:.c=.o)
 
 all: $(NAME)

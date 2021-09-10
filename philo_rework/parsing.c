@@ -31,7 +31,7 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	simulation->time_to_eat = ft_atoi_strict(argv[TIME_TO_EAT]);
 	simulation->time_to_sleep = ft_atoi_strict(argv[TIME_TO_SLEEP]);
 	// simulation->number_of_meals = ft_atoi_strict(argv[NUMBER_OF_MEALS]);
-	if (simulation->number_of_philosophers == -1 || simulation->time_to_die == -1 || simulation->time_to_eat == -1 || simulation->time_to_sleep == -1)
+	if (simulation->number_of_philosophers < 0 || simulation->time_to_die < 0 || simulation->time_to_eat < 0 || simulation->time_to_sleep < 0)
 	{
 		free(simulation);
 		return (NULL);

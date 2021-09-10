@@ -24,6 +24,7 @@ typedef struct	s_philosopher
 	pthread_t		thread;
 	unsigned long	last_meal; 
 	unsigned long	last_sleep;
+	unsigned long	starting_time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 }				t_philosopher;
@@ -49,9 +50,26 @@ typedef struct	s_philosopher
 
 
 // ---- PARSING ----
-t_simulation *parse_arguments(int argc, char *argv[]);
+t_simulation	*parse_arguments(int argc, char *argv[]);
 
 // ---- SIMULATION ----
-unsigned int launch_simulation(t_simulation *simulation);
+unsigned int	launch_simulation(t_simulation *simulation);
+
+// ---- INIT ----
+void			destroy_philosophers(t_philosopher *philosophers, int number_of_philosophers);
+t_philosopher	*init_philosophers(int number_of_philosophers, pthread_mutex_t *forks);
+void			destroy_forks(pthread_mutex_t *forks, int number_of_forks);
+pthread_mutex_t	*init_forks(int number_of_forks);
+
+// ---- ACTIONS----
+void			philo_eat(void);
+void			philo_sleep(void);
+void			philo_think(void);
+
+// ---- TIME ----
+unsigned long	get_current_time(void);
+unsigned long	get_elapsed_time(t_philosopher *philosopher);
+unsigned long	timeval_to_msec(struct timeval *time);
+void			ft_usleep(unsigned long duration);
 
 #endif
