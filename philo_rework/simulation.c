@@ -6,8 +6,12 @@ void *routine(void *arg)
 
 	philosopher = arg;
 	printf("- Hello from philosopher number [%2d]\n",  philosopher->index);
-	sleep(3);
-	printf("- NOW I AM [%2d]\n",  philosopher->index);
+	while (true)
+	{
+		philo_eat(philosopher);
+		philo_sleep(philosopher);
+		philo_think(philosopher);
+	}
 	return (NULL);
 }
 

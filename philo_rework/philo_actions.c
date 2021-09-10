@@ -4,7 +4,7 @@ void display_state(t_philosopher *philosopher, t_state state)
 {
 	static char *messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
 
-	if (state == philosopher->state)
+	if (state == philosopher->state || state == FORK)
 		printf("%lu %d %s\n", get_elapsed_time(philosopher), philosopher->index + 1, messages[state]);
 }
 
@@ -28,6 +28,7 @@ void philo_eat(t_philosopher *philosopher)
 
 void philo_sleep(t_philosopher *philosopher)
 {
+	philosopher->last_sleep = get_current_time();
 	philosopher->state = SLEEPING;
 	display_state(philosopher, SLEEPING);
 	ft_usleep(philosopher->simulation->time_to_sleep);

@@ -23,7 +23,7 @@ void ft_usleep(unsigned long duration)
 {
 	unsigned long target_time;
 
-	target_time = (get_current_time() * 1000) + duration;
+	target_time = (get_current_time() * 1000) + duration * 1000;
 	while (get_current_time() * 1000 <= target_time)
 		usleep(100);
 }
