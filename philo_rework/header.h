@@ -9,6 +9,8 @@
 #include <stdbool.h>
 
 typedef enum	e_state { THINKING, FORK, EATING, SLEEPING, DEAD } t_state;
+
+typedef struct	s_philosopher t_philosopher;
 typedef struct	s_simulation
 {
 	int				number_of_philosophers;
@@ -16,8 +18,12 @@ typedef struct	s_simulation
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_meals;
+	pthread_t		watcher;
+	t_philosopher 	*philosophers;
 	unsigned long	starting_time;
+	pthread_mutex_t	*forks;
 }				t_simulation;
+
 typedef struct	s_philosopher
 {
 	int				index;

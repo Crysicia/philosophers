@@ -31,36 +31,49 @@ bool launch_threads(t_philosopher *philosophers, int number_of_philosophers)
 	return (true);
 }
 
-void wait_threads(t_philosopher *philosophers, int number_of_philosophers)
+void wait_threads(t_simulation *simulation)
 {
 	int index;
 
 	index = 0;
-	while (index < number_of_philosophers)
+	while (index < simulation->number_of_philosophers)
 	{
-		pthread_join(philosophers[index].thread, NULL);
+		pthread_join(simulation->philosophers[index].thread, NULL);
 		index++;
 	}
+	pthread_join(simulation->watcher, NULL);
+}
+
+void *watcher(void *arg)
+{
+	t_philosopher *philosophers;
+
+	philosophers = arg;
+	return (NULL);
+}
+
+bool launch_watcher(t_simulation *simulation)
+{
+	if (pthread_create(&simulation->watcher, NULL, watcher, simulation->philosophers))
+		return (false);
+	return (true);
 }
 
 unsigned int launch_simulation(t_simulation *simulation)
 {
-	t_philosopher	*philosophers;
-	pthread_mutex_t	*forks;
-
-	forks = init_forks(simulation->number_of_philosophers);
-	if (!forks)
+	simulation->forks = init_forks(simulation->number_of_philosophers);
+	if (!simulation->forks)
 		return (ERR_COULD_NOT_INITIALIZE_FORKS);
-	philosophers = init_philosophers(simulation, forks);
-	if (!philosophers)
+	simulation->philosophers = init_philosophers(simulation, simulation->forks);
+	if (!simulation->philosophers)
 	{
-		destroy_forks(forks, simulation->number_of_philosophers);
+		destroy_forks(simulation->forks, simulation->number_of_philosophers);
 		return (ERR_COULD_NOT_INITIALIZE_PHILOS);
 	}
 	for (int i = 0; i < simulation->number_of_philosophers; i++)
-		printf("------- Number %02d -------\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", philosophers[i].index, philosophers[i].left_fork, philosophers[i].right_fork, philosophers[i].state, philosophers[i].simulation->starting_time);
-	if (!launch_threads(philosophers, simulation->number_of_philosophers))
+		printf("------- Number %02d -------\n- Address: %p\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", simulation->philosophers[i].index, &simulation->philosophers[i], simulation->philosophers[i].left_fork, simulation->philosophers[i].right_fork, simulation->philosophers[i].state, simulation->starting_time);
+	if (!launch_threads(simulation->philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
-	wait_threads(philosophers, simulation->number_of_philosophers);
+	wait_threads(simulation);
 	return (SUCCESS);
 }
