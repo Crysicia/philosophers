@@ -8,7 +8,8 @@ SRCS 		=	main.c \
 				simulation.c \
 				init.c \
 				philo_actions.c \
-				time.c
+				time.c \
+				watcher.c
 OBJS 		= $(SRCS:.c=.o)
 
 all: $(NAME)

@@ -26,6 +26,7 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	simulation = malloc(sizeof(t_simulation));
 	if (!simulation)
 		return (NULL);
+	simulation->is_running				= true;
 	simulation->number_of_philosophers	= ft_atoi_strict(argv[NUMBER_OF_PHILOSOPHERS]);
 	simulation->time_to_die				= ft_atoi_strict(argv[TIME_TO_DIE]);
 	simulation->time_to_eat				= ft_atoi_strict(argv[TIME_TO_EAT]);

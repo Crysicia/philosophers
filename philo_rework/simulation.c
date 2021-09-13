@@ -5,10 +5,10 @@ void *routine(void *arg)
 	t_philosopher *philosopher;
 
 	philosopher = arg;
-	printf("- Hello from philosopher number [%2d]\n",  philosopher->index);
+	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
 	if (philosopher->index % 2)
-		ft_msleep(1);
-	while (true)
+		ft_msleep(10);
+	while (philosopher->simulation->is_running)
 	{
 		philo_eat(philosopher);
 		philo_sleep(philosopher);
@@ -44,17 +44,9 @@ void wait_threads(t_simulation *simulation)
 	pthread_join(simulation->watcher, NULL);
 }
 
-void *watcher(void *arg)
-{
-	t_philosopher *philosophers;
-
-	philosophers = arg;
-	return (NULL);
-}
-
 bool launch_watcher(t_simulation *simulation)
 {
-	if (pthread_create(&simulation->watcher, NULL, watcher, simulation->philosophers))
+	if (pthread_create(&simulation->watcher, NULL, watcher, simulation))
 		return (false);
 	return (true);
 }
@@ -70,10 +62,11 @@ unsigned int launch_simulation(t_simulation *simulation)
 		destroy_forks(simulation->forks, simulation->number_of_philosophers);
 		return (ERR_COULD_NOT_INITIALIZE_PHILOS);
 	}
-	for (int i = 0; i < simulation->number_of_philosophers; i++)
-		printf("------- Number %02d -------\n- Address: %p\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", simulation->philosophers[i].index, &simulation->philosophers[i], simulation->philosophers[i].left_fork, simulation->philosophers[i].right_fork, simulation->philosophers[i].state, simulation->starting_time);
+	// for (int i = 0; i < simulation->number_of_philosophers; i++)
+	// 	printf("------- Number %02d -------\n- Address: %p\n- Fork L = %p\n- Fork R = %p\n- State = %d\n- Time = %lu\n-------------------------\n", simulation->philosophers[i].index, &simulation->philosophers[i], simulation->philosophers[i].left_fork, simulation->philosophers[i].right_fork, simulation->philosophers[i].state, simulation->starting_time);
 	if (!launch_threads(simulation->philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
+	launch_watcher(simulation);
 	wait_threads(simulation);
 	return (SUCCESS);
 }

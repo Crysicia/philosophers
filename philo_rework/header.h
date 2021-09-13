@@ -18,6 +18,7 @@ typedef struct	s_simulation
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_meals;
+	bool			is_running;
 	pthread_t		watcher;
 	t_philosopher 	*philosophers;
 	unsigned long	starting_time;
@@ -34,6 +35,7 @@ typedef struct	s_philosopher
 	unsigned long	last_sleep;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*access_lock;
 }				t_philosopher;
 
 #define NUMBER_OF_PHILOSOPHERS	1
@@ -72,11 +74,15 @@ pthread_mutex_t	*init_forks(int number_of_forks);
 void			philo_eat(t_philosopher *philosopher);
 void			philo_sleep(t_philosopher *philosopher);
 void			philo_think(t_philosopher *philosopher);
+void			display_state(t_philosopher *philosopher, t_state state);
 
 // ---- TIME ----
 unsigned long	get_current_time(void);
 unsigned long	get_elapsed_time(t_philosopher *philosopher);
 unsigned long	timeval_to_msec(struct timeval *time);
 void			ft_msleep(unsigned long duration);
+
+// ---- WATCHER ----
+void			*watcher(void *arg);
 
 #endif

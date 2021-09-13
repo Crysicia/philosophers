@@ -17,6 +17,12 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 {
 	// if (pthread_create(&philosopher->thread))
 	// 	return (false);
+	philosopher->access_lock		= malloc(sizeof(pthread_mutex_t));
+	if (!philosopher->access_lock || pthread_mutex_init(philosopher->access_lock, NULL) != 0)
+	{
+		free(philosopher->access_lock);
+		return (false);
+	}
 	philosopher->simulation		= simulation;
 	philosopher->index			= index;
 	philosopher->left_fork		= &forks[index];
