@@ -71,6 +71,6 @@ void			philo_think(t_philosopher *philosopher);
 unsigned long	get_current_time(void);
 unsigned long	get_elapsed_time(t_philosopher *philosopher);
 unsigned long	timeval_to_msec(struct timeval *time);
-void			ft_usleep(unsigned long duration);
+void			ft_msleep(unsigned long duration);
 
 #endif
