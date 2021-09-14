@@ -1,5 +1,24 @@
 #include "header.h"
 
+pthread_mutex_t *init_lock(void)
+{
+	pthread_mutex_t *lock;
+
+	lock = malloc(sizeof(pthread_mutex_t));
+	if (!lock || pthread_mutex_init(lock, NULL) != 0)
+	{
+		free(lock);
+		return (NULL);
+	}
+	return (lock);
+}
+
+void destroy_lock(pthread_mutex_t *lock)
+{
+	pthread_mutex_destroy(lock);
+	free(lock);
+}
+
 int ft_atoi_strict(const char *str)
 {
 	int result;
@@ -27,14 +46,20 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	if (!simulation)
 		return (NULL);
 	simulation->is_running				= true;
+	simulation->write_lock				= init_lock();
 	simulation->number_of_philosophers	= ft_atoi_strict(argv[NUMBER_OF_PHILOSOPHERS]);
 	simulation->time_to_die				= ft_atoi_strict(argv[TIME_TO_DIE]);
 	simulation->time_to_eat				= ft_atoi_strict(argv[TIME_TO_EAT]);
 	simulation->time_to_sleep			= ft_atoi_strict(argv[TIME_TO_SLEEP]);
 	simulation->starting_time			= get_current_time();
 	// simulation->number_of_meals = ft_atoi_strict(argv[NUMBER_OF_MEALS]);
-	if (simulation->number_of_philosophers < 0 || simulation->time_to_die < 0 || simulation->time_to_eat < 0 || simulation->time_to_sleep < 0)
+	if (!simulation->write_lock
+		|| simulation->number_of_philosophers < 0
+		|| simulation->time_to_die < 0
+		|| simulation->time_to_eat < 0
+		|| simulation->time_to_sleep < 0)
 	{
+		destroy_lock(simulation->write_lock);
 		free(simulation);
 		return (NULL);
 	}

@@ -23,6 +23,7 @@ typedef struct	s_simulation
 	t_philosopher 	*philosophers;
 	unsigned long	starting_time;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	*write_lock;
 }				t_simulation;
 
 typedef struct	s_philosopher
@@ -60,6 +61,7 @@ typedef struct	s_philosopher
 
 // ---- PARSING ----
 t_simulation	*parse_arguments(int argc, char *argv[]);
+void			destroy_lock(pthread_mutex_t *lock);
 
 // ---- SIMULATION ----
 unsigned int	launch_simulation(t_simulation *simulation);

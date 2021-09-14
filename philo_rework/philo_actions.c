@@ -4,9 +4,11 @@ void display_state(t_philosopher *philosopher, t_state state)
 {
 	static char *messages[5] = { "is thinking", "has taken a fork", "is eating", "is sleeping", "died" };
 
+	pthread_mutex_lock(philosopher->simulation->write_lock);
 	if (philosopher->simulation->is_running
 		&& (state == philosopher->state || state == FORK))
 		printf("%lu %d %s\n", get_elapsed_time(philosopher), philosopher->index + 1, messages[state]);
+	pthread_mutex_unlock(philosopher->simulation->write_lock);
 }
 
 void philo_take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)

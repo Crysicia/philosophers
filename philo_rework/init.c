@@ -7,7 +7,8 @@ void destroy_philosophers(t_philosopher *philosophers, int number_of_philosopher
 	index = 0;
 	while (index < number_of_philosophers)
 	{
-		// pthread_detach(philosophers[index].thread);
+		pthread_detach(philosophers[index].thread);
+		destroy_lock(philosophers[index].access_lock);
 		index++;
 	}
 	free(philosophers);
@@ -17,7 +18,7 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 {
 	// if (pthread_create(&philosopher->thread))
 	// 	return (false);
-	philosopher->access_lock		= malloc(sizeof(pthread_mutex_t));
+	philosopher->access_lock	= malloc(sizeof(pthread_mutex_t));
 	if (!philosopher->access_lock || pthread_mutex_init(philosopher->access_lock, NULL) != 0)
 	{
 		free(philosopher->access_lock);
