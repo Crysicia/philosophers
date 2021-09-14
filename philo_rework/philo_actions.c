@@ -17,6 +17,7 @@ void philo_take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)
 	display_state(philosopher, FORK);
 }
 
+
 void philo_eat(t_philosopher *philosopher)
 {
 	philo_take_fork(philosopher, philosopher->right_fork);
@@ -25,17 +26,19 @@ void philo_eat(t_philosopher *philosopher)
 	philo_set_state(philosopher, EATING);
 
 	display_state(philosopher, EATING);
-	ft_msleep(philosopher->simulation->time_to_eat - 1);
-	pthread_mutex_unlock(philosopher->right_fork);
-	pthread_mutex_unlock(philosopher->left_fork);
+	// ft_msleep(philosopher->simulation->time_to_eat - 1);
+	// pthread_mutex_unlock(philosopher->right_fork);
+	// pthread_mutex_unlock(philosopher->left_fork);
 }
 
 void philo_sleep(t_philosopher *philosopher)
 {
+	pthread_mutex_unlock(philosopher->right_fork);
+	pthread_mutex_unlock(philosopher->left_fork);
 	philo_set_duration(philosopher, &philosopher->last_sleep, get_current_time());
 	philo_set_state(philosopher, SLEEPING);
 	display_state(philosopher, SLEEPING);
-	ft_msleep(philosopher->simulation->time_to_sleep - 1);
+	// ft_msleep(philosopher->simulation->time_to_sleep - 1);
 }
 
 void philo_think(t_philosopher *philosopher)

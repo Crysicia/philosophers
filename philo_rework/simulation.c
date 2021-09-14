@@ -1,5 +1,30 @@
 #include "header.h"
 
+bool philo_can_think(t_philosopher *philosopher)
+{
+	unsigned long last_sleep;
+	unsigned long time_to_sleep;
+
+	time_to_sleep = philosopher->simulation->time_to_sleep;
+	last_sleep = philo_get_duration(philosopher, &philosopher->last_sleep);
+	return (philo_get_state(philosopher) == SLEEPING && last_sleep + time_to_sleep <= get_current_time());
+}
+
+bool philo_can_sleep(t_philosopher *philosopher)
+{
+	unsigned long last_meal;
+	unsigned long time_to_eat;
+
+	time_to_eat = philosopher->simulation->time_to_eat;
+	last_meal = philo_get_duration(philosopher, &philosopher->last_meal);
+	return (philo_get_state(philosopher) == EATING && last_meal + time_to_eat <= get_current_time());
+}
+
+bool philo_can_eat(t_philosopher *philosopher)
+{
+	return (philo_get_state(philosopher) == THINKING);
+}
+
 void *routine(void *arg)
 {
 	bool is_first_iteration;
@@ -7,13 +32,17 @@ void *routine(void *arg)
 
 	is_first_iteration = true;
 	philosopher = arg;
+	if (philosopher->index % 2)
+		philo_sleep(philosopher);
 	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
 	while (is_simulation_running(philosopher->simulation))
 	{
-		if ((philosopher->index % 2 && is_first_iteration) || !is_first_iteration)
+		if (philo_can_eat(philosopher))
 			philo_eat(philosopher);
-		philo_sleep(philosopher);
-		philo_think(philosopher);
+		else if (philo_can_sleep(philosopher))
+			philo_sleep(philosopher);
+		else if (philo_can_think(philosopher))
+			philo_think(philosopher);
 		is_first_iteration = false;
 	}
 	return (NULL);
