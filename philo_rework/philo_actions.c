@@ -21,10 +21,9 @@ void philo_eat(t_philosopher *philosopher)
 {
 	philo_take_fork(philosopher, philosopher->right_fork);
 	philo_take_fork(philosopher, philosopher->left_fork);
-
 	philo_set_duration(philosopher, &philosopher->last_meal, get_current_time());
 	philo_set_state(philosopher, EATING);
-	
+
 	display_state(philosopher, EATING);
 	ft_msleep(philosopher->simulation->time_to_eat - 1);
 	pthread_mutex_unlock(philosopher->right_fork);

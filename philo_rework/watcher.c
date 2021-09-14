@@ -27,13 +27,13 @@ bool philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
 
 void *watcher(void *arg)
 {
-	int index;
-	t_simulation *simulation;
-	t_philosopher *philosophers;
+	int				index;
+	t_simulation	*simulation;
+	t_philosopher	*philosophers;
 
 	simulation		= arg;
 	philosophers	= simulation->philosophers;
-	while (is_simulation_running(simulation))
+	while (true)
 	{
 		index = 0;
 		while (index < simulation->number_of_philosophers)
@@ -49,6 +49,7 @@ void *watcher(void *arg)
 			}
 			index++;
 		}
+		// usleep(1000);
 	}
 	return (NULL);
 }

@@ -89,6 +89,7 @@ void			ft_msleep(unsigned long duration);
 // ---- WATCHER ----
 void			*watcher(void *arg);
 bool			is_simulation_running(t_simulation *simulation);
+bool			philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die);
 
 // ---- ACCESS ----
 t_state			philo_get_state(t_philosopher *philosopher);
