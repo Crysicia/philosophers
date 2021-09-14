@@ -24,6 +24,7 @@ typedef struct	s_simulation
 	unsigned long	starting_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*write_lock;
+	pthread_mutex_t	*access_lock;
 }				t_simulation;
 
 typedef struct	s_philosopher
@@ -61,6 +62,7 @@ typedef struct	s_philosopher
 
 // ---- PARSING ----
 t_simulation	*parse_arguments(int argc, char *argv[]);
+pthread_mutex_t	*init_lock(void);
 void			destroy_lock(pthread_mutex_t *lock);
 
 // ---- SIMULATION ----
@@ -86,5 +88,12 @@ void			ft_msleep(unsigned long duration);
 
 // ---- WATCHER ----
 void			*watcher(void *arg);
+bool			is_simulation_running(t_simulation *simulation);
+
+// ---- ACCESS ----
+t_state			philo_get_state(t_philosopher *philosopher);
+void			philo_set_state(t_philosopher *philosopher, t_state state);
+unsigned long	philo_get_duration(t_philosopher *philosopher, unsigned long *philo_duration);
+void			philo_set_duration(t_philosopher *philosopher, unsigned long *philo_duration, unsigned long set_duration);
 
 #endif

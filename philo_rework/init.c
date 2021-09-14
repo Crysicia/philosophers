@@ -18,8 +18,8 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 {
 	// if (pthread_create(&philosopher->thread))
 	// 	return (false);
-	philosopher->access_lock	= malloc(sizeof(pthread_mutex_t));
-	if (!philosopher->access_lock || pthread_mutex_init(philosopher->access_lock, NULL) != 0)
+	philosopher->access_lock	= init_lock();
+	if (!philosopher->access_lock)
 	{
 		free(philosopher->access_lock);
 		return (false);
@@ -59,9 +59,15 @@ t_philosopher *init_philosophers(t_simulation *simulation, pthread_mutex_t *fork
 
 void destroy_forks(pthread_mutex_t *forks, int number_of_forks)
 {
-	(void) forks;
-	(void) number_of_forks;
-	return ;
+	int index;
+
+	index = 0;
+	while (index < number_of_forks)
+	{
+		pthread_mutex_destroy(&forks[index]);
+		index++;
+	}
+	free(forks);
 }
 
 pthread_mutex_t *init_forks(int number_of_forks)

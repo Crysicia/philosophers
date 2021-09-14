@@ -1,5 +1,15 @@
 #include "header.h"
 
+bool is_simulation_running(t_simulation *simulation)
+{
+	bool ret;
+
+	pthread_mutex_lock(simulation->access_lock);
+	ret = simulation->is_running;
+	pthread_mutex_unlock(simulation->access_lock);
+	return (ret);
+}
+
 bool philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
 {
 	bool ret;
@@ -23,18 +33,18 @@ void *watcher(void *arg)
 
 	simulation		= arg;
 	philosophers	= simulation->philosophers;
-	while (simulation->is_running)
+	while (is_simulation_running(simulation))
 	{
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
 			if (philo_is_dead(&philosophers[index], simulation->time_to_die))
 			{
-				pthread_mutex_lock(philosophers[index].access_lock);
-				philosophers[index].state = DEAD;
-				pthread_mutex_unlock(philosophers[index].access_lock);
+				philo_set_state(&philosophers[index], DEAD);
 				display_state(&philosophers[index], DEAD);
+				pthread_mutex_lock(simulation->access_lock);
 				simulation->is_running = false;
+				pthread_mutex_unlock(simulation->access_lock);
 				return (NULL);
 			}
 			index++;

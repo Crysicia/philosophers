@@ -2,17 +2,19 @@
 
 void *routine(void *arg)
 {
+	bool is_first_iteration;
 	t_philosopher *philosopher;
 
+	is_first_iteration = true;
 	philosopher = arg;
 	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
-	if (philosopher->index % 2)
-		ft_msleep(10);
-	while (philosopher->simulation->is_running)
+	while (is_simulation_running(philosopher->simulation))
 	{
-		philo_eat(philosopher);
+		if ((philosopher->index % 2 && is_first_iteration) || !is_first_iteration)
+			philo_eat(philosopher);
 		philo_sleep(philosopher);
 		philo_think(philosopher);
+		is_first_iteration = false;
 	}
 	return (NULL);
 }
