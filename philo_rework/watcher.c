@@ -36,6 +36,7 @@ void *watcher(void *arg)
 	while (true)
 	{
 		index = 0;
+		//dprintf(STDERR_FILENO, "%lu | %lu | - {%s} - RUNNING\n", get_elapsed_time(philosophers), get_current_time(), __FUNCTION__);
 		while (index < simulation->number_of_philosophers)
 		{
 			if (philo_is_dead(&philosophers[index], simulation->time_to_die))
@@ -49,7 +50,7 @@ void *watcher(void *arg)
 			}
 			index++;
 		}
-		// usleep(1000);
+		usleep(900);
 	}
 	return (NULL);
 }

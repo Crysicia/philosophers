@@ -32,11 +32,14 @@ void *routine(void *arg)
 
 	is_first_iteration = true;
 	philosopher = arg;
+	while (!is_simulation_running(philosopher->simulation))
+		;
 	if (philosopher->index % 2)
 		philo_sleep(philosopher);
 	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
 	while (is_simulation_running(philosopher->simulation))
 	{
+		// dprintf(STDERR_FILENO, "%lu | %03d | - {%s} - RUNNING\n", get_elapsed_time(philosopher), philosopher->index + 1, __FUNCTION__);
 		if (philo_can_eat(philosopher))
 			philo_eat(philosopher);
 		else if (philo_can_sleep(philosopher))
@@ -44,6 +47,7 @@ void *routine(void *arg)
 		else if (philo_can_think(philosopher))
 			philo_think(philosopher);
 		is_first_iteration = false;
+		usleep(100);
 	}
 	return (NULL);
 }
@@ -82,6 +86,14 @@ bool launch_watcher(t_simulation *simulation)
 	return (true);
 }
 
+void start_simulation(t_simulation *simulation)
+{
+	pthread_mutex_lock(simulation->access_lock);
+	simulation->is_running = true;
+	simulation->starting_time = get_current_time();
+	pthread_mutex_unlock(simulation->access_lock);
+}
+
 unsigned int launch_simulation(t_simulation *simulation)
 {
 	simulation->forks = init_forks(simulation->number_of_philosophers);
@@ -98,6 +110,7 @@ unsigned int launch_simulation(t_simulation *simulation)
 	if (!launch_threads(simulation->philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
 	launch_watcher(simulation);
+	start_simulation(simulation);
 	wait_threads(simulation);
 	return (SUCCESS);
 }

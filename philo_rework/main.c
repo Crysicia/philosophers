@@ -8,7 +8,7 @@ void print_err(unsigned int code)
 	message = MSG_UNEXPECTED_ERR;
 	if (code <= NUMBER_OF_ERRORS)
 		message = errors[code - 1];
-	dprintf(STDERR_FILENO, "ERROR: %s\n", message);
+	//dprintf(STDERR_FILENO, "ERROR: %s\n", message);
 }
 
 int main(int argc, char *argv[])
