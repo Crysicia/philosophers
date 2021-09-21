@@ -1,5 +1,21 @@
 #include "header.h"
 
+void increment_total_meals(t_simulation *simulation)
+{
+	pthread_mutex_lock(simulation->access_lock);
+	simulation->meals_ate++;
+	pthread_mutex_unlock(simulation->access_lock);
+}
+
+int get_total_meals(t_simulation *simulation)
+{
+	int meals_ate;
+	pthread_mutex_lock(simulation->access_lock);
+	meals_ate = simulation->meals_ate;
+	pthread_mutex_unlock(simulation->access_lock);
+	return (meals_ate);
+}
+
 bool is_simulation_running(t_simulation *simulation)
 {
 	bool ret;
@@ -38,6 +54,13 @@ void *watcher(void *arg)
 		index = 0;
 		while (index < simulation->number_of_philosophers)
 		{
+			if (get_total_meals(simulation) >= simulation->number_of_philosophers)
+			{
+				pthread_mutex_lock(simulation->access_lock);
+				simulation->is_running = false;
+				pthread_mutex_unlock(simulation->access_lock);
+				return (NULL);
+			}
 			if (philo_is_dead(&philosophers[index], simulation->time_to_die))
 			{
 				philo_set_state(&philosophers[index], DEAD);

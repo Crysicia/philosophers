@@ -28,6 +28,9 @@ void philo_eat(t_philosopher *philosopher)
 	ft_msleep(philosopher->simulation->time_to_eat - 1);
 	pthread_mutex_unlock(philosopher->right_fork);
 	pthread_mutex_unlock(philosopher->left_fork);
+	philosopher->number_of_meals++;
+	if (philosopher->number_of_meals == philosopher->simulation->number_of_meals)
+		increment_total_meals(philosopher->simulation);
 }
 
 void philo_sleep(t_philosopher *philosopher)
