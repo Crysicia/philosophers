@@ -13,6 +13,9 @@ typedef enum	e_state { THINKING, FORK, EATING, SLEEPING, DEAD } t_state;
 typedef struct	s_philosopher t_philosopher;
 typedef struct	s_simulation
 {
+	int				dead_philo;
+	pthread_mutex_t	*start_lock;
+
 	int				number_of_philosophers;
 	int				time_to_die;
 	int				time_to_eat;
@@ -30,6 +33,13 @@ typedef struct	s_simulation
 
 typedef struct	s_philosopher
 {
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				max_meals;
+	unsigned long	starting_time;
+	pthread_mutex_t	*write_lock;
+
 	int				index;
 	int				number_of_meals;
 	t_state 		state; 

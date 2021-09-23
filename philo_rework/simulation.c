@@ -7,7 +7,11 @@ void *routine(void *arg)
 
 	is_first_iteration = true;
 	philosopher = arg;
+	pthread_mutex_lock(philosopher->simulation->start_lock);
+	pthread_mutex_unlock(philosopher->simulation->start_lock);
 	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
+	if (philosopher->index % 2 == 0)
+		usleep(100);
 	while (is_simulation_running(philosopher->simulation))
 	{
 		if ((philosopher->index % 2 && is_first_iteration) || !is_first_iteration)
@@ -55,6 +59,7 @@ bool launch_watcher(t_simulation *simulation)
 
 unsigned int launch_simulation(t_simulation *simulation)
 {
+	pthread_mutex_lock(simulation->start_lock);
 	simulation->forks = init_forks(simulation->number_of_philosophers);
 	if (!simulation->forks)
 		return (ERR_COULD_NOT_INITIALIZE_FORKS);
@@ -69,6 +74,7 @@ unsigned int launch_simulation(t_simulation *simulation)
 	if (!launch_threads(simulation->philosophers, simulation->number_of_philosophers))
 		return (ERR_COULD_NOT_CREATE_THREAD);
 	launch_watcher(simulation);
+	pthread_mutex_unlock(simulation->start_lock);
 	wait_threads(simulation);
 	return (SUCCESS);
 }

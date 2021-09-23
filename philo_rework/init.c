@@ -24,6 +24,13 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 		free(philosopher->access_lock);
 		return (false);
 	}
+	philosopher->time_to_die	= simulation->time_to_die;
+	philosopher->time_to_eat	= simulation->time_to_eat;
+	philosopher->time_to_sleep	= simulation->time_to_sleep;
+	philosopher->max_meals		= simulation->number_of_meals;
+	philosopher->starting_time	= simulation->starting_time;
+	philosopher->write_lock		= simulation->write_lock;
+
 	philosopher->simulation		= simulation;
 	philosopher->index			= index;
 	philosopher->left_fork		= &forks[index];

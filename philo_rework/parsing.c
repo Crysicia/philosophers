@@ -46,7 +46,9 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	if (!simulation)
 		return (NULL);
 	simulation->is_running				= true;
+	simulation->dead_philo				= 0;
 	simulation->write_lock				= init_lock();
+	simulation->start_lock				= init_lock();
 	simulation->access_lock				= init_lock();
 	simulation->number_of_philosophers	= ft_atoi_strict(argv[NUMBER_OF_PHILOSOPHERS]);
 	simulation->time_to_die				= ft_atoi_strict(argv[TIME_TO_DIE]);
@@ -60,6 +62,7 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	// simulation->number_of_meals = ft_atoi_strict(argv[NUMBER_OF_MEALS]);
 	if (!simulation->write_lock
 		|| !simulation->access_lock
+		|| !simulation->start_lock
 		|| simulation->number_of_philosophers < 0
 		|| simulation->time_to_die < 0
 		|| simulation->time_to_eat < 0
@@ -68,6 +71,7 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	{
 		destroy_lock(simulation->access_lock);
 		destroy_lock(simulation->write_lock);
+		destroy_lock(simulation->start_lock);
 		free(simulation);
 		return (NULL);
 	}
