@@ -28,8 +28,16 @@ bool launch_threads(t_philosopher *philosophers, int number_of_philosophers)
 	{
 		if (pthread_create(&philosophers[index].thread, NULL, routine, &philosophers[index]))
 			return (false);
-		index++;
+		index += 1;
+		// usleep(10);
 	}
+	// index = 1;
+	// while (index < number_of_philosophers)
+	// {
+	// 	if (pthread_create(&philosophers[index].thread, NULL, routine, &philosophers[index]))
+	// 		return (false);
+	// 	index += 2;
+	// }
 	return (true);
 }
 

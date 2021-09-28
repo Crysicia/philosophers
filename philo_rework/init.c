@@ -25,6 +25,7 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 		return (false);
 	}
 	philosopher->simulation		= simulation;
+	philosopher->starting_time	= get_current_time();
 	philosopher->index			= index;
 	philosopher->left_fork		= &forks[index];
 	philosopher->right_fork		= &forks[(index + 1) % simulation->number_of_philosophers];

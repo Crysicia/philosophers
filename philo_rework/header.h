@@ -35,6 +35,7 @@ typedef struct	s_philosopher
 	t_state 		state; 
 	pthread_t		thread;
 	t_simulation	*simulation;
+	unsigned long	starting_time;
 	unsigned long	last_meal;
 	unsigned long	last_sleep;
 	pthread_mutex_t	*left_fork;

@@ -24,6 +24,6 @@ void ft_msleep(unsigned long duration)
 	unsigned long target_time;
 
 	target_time = get_current_time() + duration;
-	while (get_current_time() <= target_time)
-		usleep(100);
+	while (get_current_time() < target_time)
+		usleep(500);
 }
