@@ -32,7 +32,6 @@ typedef struct	s_philosopher
 {
 	int				index;
 	int				number_of_meals;
-	t_state 		state; 
 	pthread_t		thread;
 	t_simulation	*simulation;
 	unsigned long	last_meal;
@@ -95,8 +94,6 @@ bool			is_simulation_running(t_simulation *simulation);
 bool			philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die);
 
 // ---- ACCESS ----
-t_state			philo_get_state(t_philosopher *philosopher);
-void			philo_set_state(t_philosopher *philosopher, t_state state);
 unsigned long	philo_get_duration(t_philosopher *philosopher, unsigned long *philo_duration);
 void			philo_set_duration(t_philosopher *philosopher, unsigned long *philo_duration, unsigned long set_duration);
 

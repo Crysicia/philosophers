@@ -28,7 +28,6 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 	philosopher->index			= index;
 	philosopher->left_fork		= &forks[index];
 	philosopher->right_fork		= &forks[(index + 1) % simulation->number_of_philosophers];
-	philosopher->state			= THINKING;
 	philosopher->number_of_meals = 0;
 	philosopher->last_meal		= 0;
 	philosopher->last_sleep		= 0;

@@ -61,7 +61,6 @@ void *watcher(void *arg)
 		{
 			if (philo_is_dead(&philosophers[index], simulation->time_to_die))
 			{
-				philo_set_state(&philosophers[index], DEAD);
 				display_state(&philosophers[index], DEAD);
 				pthread_mutex_lock(simulation->access_lock);
 				simulation->is_running = false;
