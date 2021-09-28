@@ -31,8 +31,6 @@ bool philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
 	bool ret;
 
 	pthread_mutex_lock(philosopher->access_lock);
-	// if (philosopher->state == DEAD)
-		// ret = true;
 	if (!philosopher->last_meal)
 		ret = (get_current_time() - philosopher->simulation->starting_time > time_to_die);
 	else

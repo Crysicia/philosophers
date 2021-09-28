@@ -2,19 +2,19 @@
 
 void *routine(void *arg)
 {
-	bool is_first_iteration;
 	t_philosopher *philosopher;
 
-	is_first_iteration = true;
 	philosopher = arg;
-	// THIS IS BUGGY, IT'S WHYMY PHILOS AREDIYING LOOOL
-	while (is_simulation_running(philosopher->simulation))
+	if (philosopher->index % 2)
 	{
-		if ((philosopher->index % 2 && is_first_iteration) || !is_first_iteration)
-			philo_eat(philosopher);
 		philo_sleep(philosopher);
 		philo_think(philosopher);
-		is_first_iteration = false;
+	}
+	while (is_simulation_running(philosopher->simulation))
+	{
+		philo_eat(philosopher);
+		philo_sleep(philosopher);
+		philo_think(philosopher);
 	}
 	return (NULL);
 }
@@ -28,16 +28,8 @@ bool launch_threads(t_philosopher *philosophers, int number_of_philosophers)
 	{
 		if (pthread_create(&philosophers[index].thread, NULL, routine, &philosophers[index]))
 			return (false);
-		index += 1;
-		// usleep(10);
+		index++;
 	}
-	// index = 1;
-	// while (index < number_of_philosophers)
-	// {
-	// 	if (pthread_create(&philosophers[index].thread, NULL, routine, &philosophers[index]))
-	// 		return (false);
-	// 	index += 2;
-	// }
 	return (true);
 }
 
