@@ -15,6 +15,8 @@ pthread_mutex_t *init_lock(void)
 
 void destroy_lock(pthread_mutex_t *lock)
 {
+	if (!lock)
+		return ;
 	pthread_mutex_destroy(lock);
 	free(lock);
 }
@@ -52,8 +54,8 @@ t_simulation *parse_arguments(int argc, char *argv[])
 	simulation->time_to_die				= ft_atoi_strict(argv[TIME_TO_DIE]);
 	simulation->time_to_eat				= ft_atoi_strict(argv[TIME_TO_EAT]);
 	simulation->time_to_sleep			= ft_atoi_strict(argv[TIME_TO_SLEEP]);
-	simulation->number_of_meals			= -1;
 	simulation->meals_ate				= 0;
+	simulation->number_of_meals			= -1;
 	if (argc == 6)
 		simulation->number_of_meals		= ft_atoi_strict(argv[NUMBER_OF_MEALS]);
 	simulation->starting_time			= get_current_time();

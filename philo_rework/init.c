@@ -16,14 +16,7 @@ void destroy_philosophers(t_philosopher *philosophers, int number_of_philosopher
 
 bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation *simulation, pthread_mutex_t *forks)
 {
-	// if (pthread_create(&philosopher->thread))
-	// 	return (false);
 	philosopher->access_lock	= init_lock();
-	if (!philosopher->access_lock)
-	{
-		free(philosopher->access_lock);
-		return (false);
-	}
 	philosopher->simulation		= simulation;
 	philosopher->index			= index;
 	philosopher->left_fork		= &forks[index];
@@ -31,6 +24,8 @@ bool init_single_philosopher(t_philosopher *philosopher, int index, t_simulation
 	philosopher->number_of_meals = 0;
 	philosopher->last_meal		= 0;
 	philosopher->last_sleep		= 0;
+	if (!philosopher->access_lock)
+		return (false);
 	return (true);
 }
 

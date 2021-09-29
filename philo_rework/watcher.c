@@ -39,6 +39,15 @@ bool philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
 	return (ret);
 }
 
+void *stop_simulation(t_simulation *simulation)
+{
+	pthread_mutex_lock(simulation->access_lock);
+	simulation->is_running = false;
+	pthread_mutex_unlock(simulation->access_lock);
+
+	return (NULL);
+}
+
 void *watcher(void *arg)
 {
 	int				index;
@@ -51,21 +60,13 @@ void *watcher(void *arg)
 	{
 		index = 0;
 		if (get_total_meals(simulation) >= simulation->number_of_philosophers)
-		{
-			pthread_mutex_lock(simulation->access_lock);
-			simulation->is_running = false;
-			pthread_mutex_unlock(simulation->access_lock);
-			return (NULL);
-		}
+			return (stop_simulation(simulation));
 		while (index < simulation->number_of_philosophers)
 		{
 			if (philo_is_dead(&philosophers[index], simulation->time_to_die))
 			{
 				display_state(&philosophers[index], DEAD);
-				pthread_mutex_lock(simulation->access_lock);
-				simulation->is_running = false;
-				pthread_mutex_unlock(simulation->access_lock);
-				return (NULL);
+				return (stop_simulation(simulation));
 			}
 			index++;
 		}
