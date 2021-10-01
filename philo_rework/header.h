@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   header.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/01 16:10:14 by lpassera          #+#    #+#             */
+/*   Updated: 2021/10/01 16:12:09 by lpassera         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef HEADER_H
 # define HEADER_H
 
@@ -91,13 +103,14 @@ unsigned long	timeval_to_msec(struct timeval *time);
 void			ft_msleep(unsigned long duration);
 
 // ---- WATCHER ----
-void			increment_total_meals(t_simulation *simulation);
 void			*watcher(void *arg);
 bool			is_simulation_running(t_simulation *simulation);
 bool			philo_is_dead(t_philosopher *philosopher,
 					unsigned int time_to_die);
 
 // ---- ACCESS ----
+void			increment_total_meals(t_simulation *simulation);
+int				get_total_meals(t_simulation *simulation);
 unsigned long	philo_get_duration(t_philosopher *philosopher,
 					unsigned long *philo_duration);
 void			philo_set_duration(t_philosopher *philosopher,

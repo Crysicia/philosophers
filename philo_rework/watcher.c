@@ -1,24 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   watcher.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/01 16:09:26 by lpassera          #+#    #+#             */
+/*   Updated: 2021/10/01 16:11:54 by lpassera         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "header.h"
 
-void increment_total_meals(t_simulation *simulation)
+bool	is_simulation_running(t_simulation *simulation)
 {
-	pthread_mutex_lock(simulation->access_lock);
-	simulation->meals_ate++;
-	pthread_mutex_unlock(simulation->access_lock);
-}
-
-int get_total_meals(t_simulation *simulation)
-{
-	int meals_ate;
-	pthread_mutex_lock(simulation->access_lock);
-	meals_ate = simulation->meals_ate;
-	pthread_mutex_unlock(simulation->access_lock);
-	return (meals_ate);
-}
-
-bool is_simulation_running(t_simulation *simulation)
-{
-	bool ret;
+	bool	ret;
 
 	pthread_mutex_lock(simulation->access_lock);
 	ret = simulation->is_running;
@@ -26,36 +22,36 @@ bool is_simulation_running(t_simulation *simulation)
 	return (ret);
 }
 
-bool philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
+bool	philo_is_dead(t_philosopher *philosopher, unsigned int time_to_die)
 {
-	bool ret;
+	bool	ret;
 
 	pthread_mutex_lock(philosopher->access_lock);
 	if (!philosopher->last_meal)
-		ret = (get_current_time() - philosopher->simulation->starting_time > time_to_die);
+		ret = (get_current_time() - philosopher->simulation->starting_time
+				> time_to_die);
 	else
 		ret = (get_current_time() - philosopher->last_meal > time_to_die);
 	pthread_mutex_unlock(philosopher->access_lock);
 	return (ret);
 }
 
-void *stop_simulation(t_simulation *simulation)
+void	*stop_simulation(t_simulation *simulation)
 {
 	pthread_mutex_lock(simulation->access_lock);
 	simulation->is_running = false;
 	pthread_mutex_unlock(simulation->access_lock);
-	
 	return (NULL);
 }
 
-void *watcher(void *arg)
+void	*watcher(void *arg)
 {
 	int				index;
 	t_simulation	*simulation;
 	t_philosopher	*philosophers;
 
-	simulation		= arg;
-	philosophers	= simulation->philosophers;
+	simulation = arg;
+	philosophers = simulation->philosophers;
 	while (true)
 	{
 		index = 0;
