@@ -43,7 +43,7 @@ t_philosopher *init_philosophers(t_simulation *simulation, pthread_mutex_t *fork
 	{
 		if (!init_single_philosopher(&philosophers[index], index, simulation, forks))
 		{
-			free(philosophers);
+			destroy_philosophers(philosophers, index + 1);
 			return (NULL);
 		}
 		index++;

@@ -1,6 +1,6 @@
 #include "header.h"
 
-void print_err(unsigned int code)
+unsigned int print_err(unsigned int code)
 {
 	static char *errors[NUMBER_OF_ERRORS] = { MSG_COULD_NOT_INITIALIZE_PHILOS, MSG_COULD_NOT_INITIALIZE_FORKS, MSG_COULD_NOT_CREATE_THREAD };
 	char *message;
@@ -9,12 +9,11 @@ void print_err(unsigned int code)
 	if (code <= NUMBER_OF_ERRORS)
 		message = errors[code - 1];
 	dprintf(STDERR_FILENO, "ERROR: %s\n", message);
+	return (code);
 }
 
 void destroy_simulation(t_simulation *simulation)
 {
-	destroy_philosophers(simulation->philosophers, simulation->number_of_philosophers);
-	destroy_forks(simulation->forks, simulation->number_of_philosophers);
 	destroy_lock(simulation->write_lock);
 	destroy_lock(simulation->access_lock);
 	free(simulation);
@@ -32,7 +31,12 @@ int main(int argc, char *argv[])
 	}
 	unsigned int ret = launch_simulation(simulation);
 	if (ret != 0)
-		print_err(ret);
+	{
+		destroy_simulation(simulation);
+		return (print_err(ret));
+	}
+	destroy_philosophers(simulation->philosophers, simulation->number_of_philosophers);
+	destroy_forks(simulation->forks, simulation->number_of_philosophers);
 	destroy_simulation(simulation);
-	return (ret);
+	return (SUCCESS);
 }
