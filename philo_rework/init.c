@@ -7,7 +7,6 @@ void destroy_philosophers(t_philosopher *philosophers, int number_of_philosopher
 	index = 0;
 	while (index < number_of_philosophers)
 	{
-		pthread_detach(philosophers[index].thread);
 		destroy_lock(philosophers[index].access_lock);
 		index++;
 	}

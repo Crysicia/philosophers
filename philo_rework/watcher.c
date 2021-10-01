@@ -44,7 +44,7 @@ void *stop_simulation(t_simulation *simulation)
 	pthread_mutex_lock(simulation->access_lock);
 	simulation->is_running = false;
 	pthread_mutex_unlock(simulation->access_lock);
-
+	
 	return (NULL);
 }
 

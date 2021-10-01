@@ -11,6 +11,15 @@ void print_err(unsigned int code)
 	dprintf(STDERR_FILENO, "ERROR: %s\n", message);
 }
 
+void destroy_simulation(t_simulation *simulation)
+{
+	destroy_philosophers(simulation->philosophers, simulation->number_of_philosophers);
+	destroy_forks(simulation->forks, simulation->number_of_philosophers);
+	destroy_lock(simulation->write_lock);
+	destroy_lock(simulation->access_lock);
+	free(simulation);
+}
+
 int main(int argc, char *argv[])
 {
 	t_simulation *simulation;
@@ -24,5 +33,6 @@ int main(int argc, char *argv[])
 	unsigned int ret = launch_simulation(simulation);
 	if (ret != 0)
 		print_err(ret);
+	destroy_simulation(simulation);
 	return (ret);
 }

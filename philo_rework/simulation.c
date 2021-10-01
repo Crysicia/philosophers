@@ -41,6 +41,7 @@ void wait_threads(t_simulation *simulation)
 	while (index < simulation->number_of_philosophers)
 	{
 		pthread_join(simulation->philosophers[index].thread, NULL);
+		pthread_detach(simulation->philosophers[index].thread);
 		index++;
 	}
 	pthread_join(simulation->watcher, NULL);
