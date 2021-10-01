@@ -1,8 +1,9 @@
 #include "header.h"
 
-unsigned long philo_get_duration(t_philosopher *philosopher, unsigned long *philo_duration)
+unsigned long	philo_get_duration(t_philosopher *philosopher,
+	unsigned long *philo_duration)
 {
-	unsigned long duration;
+	unsigned long	duration;
 
 	pthread_mutex_lock(philosopher->access_lock);
 	duration = *philo_duration;
@@ -10,7 +11,8 @@ unsigned long philo_get_duration(t_philosopher *philosopher, unsigned long *phil
 	return (duration);
 }
 
-void philo_set_duration(t_philosopher *philosopher, unsigned long *philo_duration, unsigned long set_duration)
+void	philo_set_duration(t_philosopher *philosopher,
+	unsigned long *philo_duration, unsigned long set_duration)
 {
 	pthread_mutex_lock(philosopher->access_lock);
 	*philo_duration = set_duration;
