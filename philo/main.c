@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 14:50:51 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/04 15:07:39 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/04 16:30:55 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	main(int argc, char *argv[])
 	simulation = parse_arguments(argc, argv);
 	if (!simulation)
 	{
-		printf("ERROR: Unexpected error when parsing arguments\n");
+		printf("ERROR: Usage %s %s\n", argv[0], MSG_USAGE);
 		return (1);
 	}
 	ret = launch_simulation(simulation);

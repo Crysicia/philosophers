@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 14:57:46 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/01 16:11:28 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/04 16:27:26 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ bool	is_simulation_valid(t_simulation *simulation, int argc)
 {
 	return (!simulation->write_lock
 		|| !simulation->access_lock
-		|| simulation->number_of_philosophers < 0
+		|| simulation->number_of_philosophers <= 0
 		|| simulation->time_to_die < 0
 		|| simulation->time_to_eat < 0
 		|| simulation->time_to_sleep < 0
-		|| (simulation->number_of_meals < 0 && argc == 6));
+		|| (simulation->number_of_meals <= 0 && argc == 6));
 }
 
 t_simulation	*parse_arguments(int argc, char *argv[])

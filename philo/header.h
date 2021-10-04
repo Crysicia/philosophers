@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 16:10:14 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/01 16:12:09 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/04 16:32:46 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,11 @@ typedef struct s_philosopher
 # define ERR_COULD_NOT_CREATE_THREAD		3
 
 # define MSG_COULD_NOT_INITIALIZE_PHILOS	"Could not initialize philosophers"
-# define MSG_COULD_NOT_INITIALIZE_FORKS	"Could not initialize forks"
-# define MSG_COULD_NOT_CREATE_THREAD 	"Could not create thread"
-# define MSG_UNEXPECTED_ERR			 	"Unexpected error"
+# define MSG_COULD_NOT_INITIALIZE_FORKS		"Could not initialize forks"
+# define MSG_COULD_NOT_CREATE_THREAD 		"Could not create thread"
+# define MSG_UNEXPECTED_ERR			 		"Unexpected error"
+# define MSG_USAGE							"<number_of_philosophers> \
+<time_to_die> <time_to_eat> <time_to_sleep> [number_of_meals]"
 
 void			destroy_simulation(t_simulation *simulation);
 
