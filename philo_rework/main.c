@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 14:50:51 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/01 16:11:22 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/04 15:07:39 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ unsigned int	print_err(unsigned int code)
 	message = MSG_UNEXPECTED_ERR;
 	if (code <= NUMBER_OF_ERRORS)
 		message = errors[code - 1];
-	dprintf(STDERR_FILENO, "ERROR: %s\n", message);
+	printf("ERROR: %s\n", message);
 	return (code);
 }
 
