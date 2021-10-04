@@ -1,4 +1,4 @@
-*.out
-*.out*
-*.dSYM
+philo
+
 *.o
+*.out

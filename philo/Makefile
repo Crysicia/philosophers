@@ -1,15 +1,32 @@
-SRCS =	main.c \
-		initialization.c \
-		destruction.c \
-		time.c \
-		actions.c \
+CC			=	gcc
+CFLAGS 		=	-Wall -Wextra -Werror -g #-fsanitize=thread -g
+RM 			=	rm -f
+NAME 		=	philo
+LIBS 		=	-lpthread
+SRCS 		=	main.c \
+				parsing.c \
+				simulation.c \
+				init.c \
+				philo_actions.c \
+				time.c \
+				watcher.c \
+				access.c
+OBJS 		= $(SRCS:.c=.o)
 
+all: $(NAME)
 
-all: $(SRCS)
-	gcc -g -g3 -lpthread -Wall -Wextra  $(SRCS) -o philo
+.c.o:
+	$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
 
-fclean:
-	rm philo
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
+
+clean:
+	$(RM) $(OBJS)
+
+fclean: clean
+	$(RM) $(NAME)
 
 re: fclean all
-# -fsanitize=thread
+
+.PHONY: all clean fclean re
