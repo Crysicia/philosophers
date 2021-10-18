@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 16:09:26 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/04 13:28:45 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/18 14:30:22 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	*stop_simulation(t_simulation *simulation)
 	pthread_mutex_lock(simulation->access_lock);
 	simulation->is_running = false;
 	pthread_mutex_unlock(simulation->access_lock);
-	unlock_all_forks(simulation);
 	return (NULL);
 }
 

@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 15:56:27 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/01 16:11:42 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/18 14:27:10 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,20 @@ void	*routine(void *arg)
 	t_philosopher	*philosopher;
 
 	philosopher = arg;
-	if (philosopher->index % 2)
+	if (philosopher->simulation->number_of_philosophers == 1)
 	{
-		philo_sleep(philosopher);
-		philo_think(philosopher);
+		philo_take_fork(philosopher, philosopher->right_fork);
+		ft_msleep(philosopher->simulation->time_to_die);
+		pthread_mutex_unlock(philosopher->right_fork);
+		return (NULL);
 	}
+	if (philosopher->index % 2)
+		ft_msleep(philosopher->simulation->time_to_sleep);
 	while (is_simulation_running(philosopher->simulation))
 	{
+		philo_think(philosopher);
 		philo_eat(philosopher);
 		philo_sleep(philosopher);
-		philo_think(philosopher);
 	}
 	return (NULL);
 }

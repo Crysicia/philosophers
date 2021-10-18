@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 16:10:14 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/04 16:32:46 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/18 14:30:14 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void			philo_eat(t_philosopher *philosopher);
 void			philo_sleep(t_philosopher *philosopher);
 void			philo_think(t_philosopher *philosopher);
 void			display_state(t_philosopher *philosopher, t_state state);
+void			philo_take_fork(t_philosopher *philo, pthread_mutex_t *fork);
 
 // ---- TIME ----
 unsigned long	get_current_time(void);
