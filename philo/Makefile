@@ -1,6 +1,5 @@
 CC			=	gcc
 CFLAGS 		=	-Wall -Wextra -Werror
-RM 			=	rm -f
 NAME 		=	philo
 LIBS 		=	-lpthread
 SRCS 		=	main.c \

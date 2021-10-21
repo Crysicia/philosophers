@@ -6,7 +6,7 @@
 /*   By: lpassera <lpassera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/01 15:54:22 by lpassera          #+#    #+#             */
-/*   Updated: 2021/10/18 16:10:24 by lpassera         ###   ########.fr       */
+/*   Updated: 2021/10/20 13:35:45 by lpassera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,8 @@ void	philo_take_fork(t_philosopher *philosopher, pthread_mutex_t *fork)
 
 void	philo_eat(t_philosopher *philosopher)
 {
-	t_simulation	*simulation;
-
-	simulation = philosopher->simulation;
-	if (philosopher->index != simulation->number_of_philosophers - 1)
-		philo_take_fork(philosopher, philosopher->left_fork);
 	philo_take_fork(philosopher, philosopher->right_fork);
-	if (philosopher->index == simulation->number_of_philosophers - 1)
-		philo_take_fork(philosopher, philosopher->left_fork);
+	philo_take_fork(philosopher, philosopher->left_fork);
 	philo_set_duration(philosopher, &philosopher->last_meal,
 		get_current_time());
 	display_state(philosopher, EATING);
@@ -63,5 +57,4 @@ void	philo_sleep(t_philosopher *philosopher)
 void	philo_think(t_philosopher *philosopher)
 {
 	display_state(philosopher, THINKING);
-	usleep(200);
 }
